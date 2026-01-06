@@ -7,10 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@repo/design-system/components/ui/tabs";
 import { SplitLayout } from "@/components/split-layout";
 import { ComponentCodeLayout } from "@/components/component-code-layout";
 import { BadForm } from "./components/bad-form";
 import { BaseForm, DeletableForm, ExportableForm } from "./components/good-form";
+import { AdvancedBadService } from "./components/advanced-bad-service";
+import { AdvancedGoodService } from "./components/advanced-good-service";
 
 const badCode = `"use client";
 
@@ -146,6 +154,69 @@ export const ExportableForm = (props: BaseFormProps & ExportableFormProps) => (
   </div>
 );`;
 
+const advancedBadCode = `"use client";
+
+/**
+ * ❌ BAD: Fat interface - forces clients to implement unused methods
+ */
+type Service = {
+  create: () => void;
+  read: () => void;
+  update: () => void;
+  delete: () => void;
+  sendEmail: () => void;
+  generateReport: () => void;
+  backup: () => void;
+};
+
+// ReadOnlyService forced to implement all methods
+const readOnlyService: Service = {
+  create: () => { throw new Error("Not supported"); },
+  read: () => { console.log("Reading data"); },
+  update: () => { throw new Error("Not supported"); },
+  delete: () => { throw new Error("Not supported"); },
+  sendEmail: () => { throw new Error("Not supported"); },
+  generateReport: () => { throw new Error("Not supported"); },
+  backup: () => { throw new Error("Not supported"); },
+};`;
+
+const advancedGoodCode = `// Segregated Interfaces
+type Readable = {
+  read: () => void;
+};
+
+type Writable = {
+  create: () => void;
+  update: () => void;
+  delete: () => void;
+};
+
+type Emailable = {
+  sendEmail: () => void;
+};
+
+// ✅ ReadOnlyService - only implements what it needs
+export class ReadOnlyService implements Readable {
+  read() {
+    console.log("Reading data");
+  }
+}
+
+// ✅ FullService - implements multiple interfaces
+export class FullService implements Readable, Writable {
+  read() { console.log("Reading data"); }
+  create() { console.log("Creating data"); }
+  update() { console.log("Updating data"); }
+  delete() { console.log("Deleting data"); }
+}
+
+// ✅ EmailService - only email functionality
+export class EmailService implements Emailable {
+  sendEmail() {
+    console.log("Sending email");
+  }
+}`;
+
 const ISPPage = () => (
   <div className="flex min-h-[calc(100vh-4rem)] flex-col">
     <div className="shrink-0 p-6">
@@ -179,47 +250,75 @@ const ISPPage = () => (
       </Card>
     </div>
 
-    <div className="flex-1">
-      <SplitLayout
-        left={
-          <ComponentCodeLayout
-            component={
-              <BadForm
-                onSubmit={() => {}}
-                onCancel={() => {}}
-                onDelete={() => {}}
-                onExport={() => {}}
-                onPrint={() => {}}
+    <div className="flex-1 p-6 pt-0">
+      <Tabs className="flex h-full flex-col" defaultValue="basic">
+        <TabsList className="mb-4">
+          <TabsTrigger value="basic">Basic Examples</TabsTrigger>
+          <TabsTrigger value="advanced">Advanced Examples</TabsTrigger>
+        </TabsList>
+        <TabsContent className="min-h-0 flex-1" value="basic">
+          <SplitLayout
+            left={
+              <ComponentCodeLayout
+                component={
+                  <BadForm
+                    onSubmit={() => {}}
+                    onCancel={() => {}}
+                    onDelete={() => {}}
+                    onExport={() => {}}
+                    onPrint={() => {}}
+                  />
+                }
+                code={badCode}
+                title="❌ Bad Component"
+                description="Forces all components to implement unused props"
               />
             }
-            code={badCode}
-            title="❌ Bad Component"
-            description="Forces all components to implement unused props"
-          />
-        }
-        right={
-          <ComponentCodeLayout
-            component={
-              <div className="space-y-4">
-                <BaseForm onSubmit={() => {}} onCancel={() => {}} />
-                <DeletableForm
-                  onSubmit={() => {}}
-                  onCancel={() => {}}
-                  onDelete={() => {}}
-                />
-                <ExportableForm
-                  onSubmit={() => {}}
-                  onCancel={() => {}}
-                  onExport={() => {}}
-                />
-              </div>
+            right={
+              <ComponentCodeLayout
+                component={
+                  <div className="space-y-4">
+                    <BaseForm onSubmit={() => {}} onCancel={() => {}} />
+                    <DeletableForm
+                      onSubmit={() => {}}
+                      onCancel={() => {}}
+                      onDelete={() => {}}
+                    />
+                    <ExportableForm
+                      onSubmit={() => {}}
+                      onCancel={() => {}}
+                      onExport={() => {}}
+                    />
+                  </div>
+                }
+                code={goodCode}
+                title="✅ Good Component"
+                description="Segregated - components only use what they need"
+              />
             }
-            code={goodCode}
-            title="✅ Good Component"
-            description="Segregated - components only use what they need"
           />
-        }
-      />
+        </TabsContent>
+        <TabsContent className="min-h-0 flex-1" value="advanced">
+          <SplitLayout
+            left={
+              <ComponentCodeLayout
+                code={advancedBadCode}
+                component={<AdvancedBadService />}
+                description="ReadOnlyService forced to implement all methods, even unused ones"
+                title="❌ Bad Component"
+              />
+            }
+            right={
+              <ComponentCodeLayout
+                code={advancedGoodCode}
+                component={<AdvancedGoodService />}
+                description="Segregated interfaces - each service only implements what it needs"
+                title="✅ Good Component"
+              />
+            }
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   </div>
 );

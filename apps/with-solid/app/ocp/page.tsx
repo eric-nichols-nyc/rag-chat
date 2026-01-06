@@ -7,10 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@repo/design-system/components/ui/tabs";
 import { SplitLayout } from "@/components/split-layout";
 import { ComponentCodeLayout } from "@/components/component-code-layout";
 import { BadButton } from "./components/bad-button";
 import { GoodButton, SuccessButton, WarningButton } from "./components/good-button";
+import { AdvancedBadNotifier } from "./components/advanced-bad-notifier";
+import { AdvancedGoodNotifier } from "./components/advanced-good-notifier";
 
 const badCode = `"use client";
 
@@ -73,6 +81,89 @@ export const WarningButton = (props: Omit<GoodButtonProps, "variant">) => (
   <GoodButton {...props} variant="outline" className="border-yellow-500 text-yellow-600" />
 );`;
 
+const advancedBadCode = `"use client";
+
+import { Card, CardContent } from "@repo/design-system/components/ui/card";
+
+type Notification = {
+  type: "email" | "sms" | "push";
+  message: string;
+  recipient: string;
+};
+
+/**
+ * ❌ BAD: Must modify this component to add new notification types
+ */
+export const AdvancedBadNotifier = () => {
+  const sendNotification = (notification: Notification) => {
+    // Must modify this function to add new types
+    switch (notification.type) {
+      case "email":
+        console.log(\`Sending email to \${notification.recipient}: \${notification.message}\`);
+        break;
+      case "sms":
+        console.log(\`Sending SMS to \${notification.recipient}: \${notification.message}\`);
+        break;
+      case "push":
+        console.log(\`Sending push to \${notification.recipient}: \${notification.message}\`);
+        break;
+      default:
+        throw new Error("Unknown notification type");
+    }
+  };
+  // ... rest of component
+};`;
+
+const advancedGoodCode = `// Main Notifier Component (open for extension)
+"use client";
+
+import { EmailNotifier } from "./notifiers/email-notifier";
+import { SmsNotifier } from "./notifiers/sms-notifier";
+import { PushNotifier } from "./notifiers/push-notifier";
+import { SlackNotifier } from "./notifiers/slack-notifier";
+
+const notifiers = {
+  email: EmailNotifier,
+  sms: SmsNotifier,
+  push: PushNotifier,
+  slack: SlackNotifier, // ✅ Added without modifying existing code
+};
+
+export const AdvancedGoodNotifier = () => {
+  const notifications = [
+    { type: "email", message: "Welcome!", recipient: "user@example.com" },
+    { type: "slack", message: "Deployment complete", recipient: "#dev-team" },
+  ];
+
+  return (
+    <Card>
+      {notifications.map((notif, idx) => {
+        const NotifierComponent = notifiers[notif.type];
+        return (
+          <NotifierComponent
+            key={idx}
+            message={notif.message}
+            recipient={notif.recipient}
+          />
+        );
+      })}
+    </Card>
+  );
+};
+
+// Individual Notifier Components (closed for modification)
+// notifiers/email-notifier.tsx
+export function EmailNotifier({ message, recipient }) {
+  const send = () => console.log(\`Sending email to \${recipient}: \${message}\`);
+  return <div>...</div>;
+}
+
+// notifiers/slack-notifier.tsx - ✅ NEW: Added without modifying existing notifiers
+export function SlackNotifier({ message, recipient }) {
+  const send = () => console.log(\`Sending Slack to \${recipient}: \${message}\`);
+  return <div>...</div>;
+}`;
+
 const OCPPage = () => (
   <div className="flex min-h-[calc(100vh-4rem)] flex-col">
     <div className="shrink-0 p-6">
@@ -107,37 +198,65 @@ const OCPPage = () => (
       </Card>
     </div>
 
-    <div className="flex-1">
-      <SplitLayout
-        left={
-          <ComponentCodeLayout
-            component={
-              <div className="space-y-2">
-                <BadButton type="primary" label="Primary" onClick={() => {}} />
-                <BadButton type="secondary" label="Secondary" onClick={() => {}} />
-                <BadButton type="danger" label="Danger" onClick={() => {}} />
-              </div>
+    <div className="flex-1 p-6 pt-0">
+      <Tabs defaultValue="basic" className="flex h-full flex-col">
+        <TabsList className="mb-4">
+          <TabsTrigger value="basic">Basic Examples</TabsTrigger>
+          <TabsTrigger value="advanced">Advanced Examples</TabsTrigger>
+        </TabsList>
+        <TabsContent value="basic" className="min-h-0 flex-1">
+          <SplitLayout
+            left={
+              <ComponentCodeLayout
+                component={
+                  <div className="space-y-2">
+                    <BadButton type="primary" label="Primary" onClick={() => {}} />
+                    <BadButton type="secondary" label="Secondary" onClick={() => {}} />
+                    <BadButton type="danger" label="Danger" onClick={() => {}} />
+                  </div>
+                }
+                code={badCode}
+                title="❌ Bad Component"
+                description="Must modify component to add new button types"
+              />
             }
-            code={badCode}
-            title="❌ Bad Component"
-            description="Must modify component to add new button types"
-          />
-        }
-        right={
-          <ComponentCodeLayout
-            component={
-              <div className="space-y-2">
-                <GoodButton label="Base Button" onClick={() => {}} />
-                <SuccessButton label="Success (Extended)" onClick={() => {}} />
-                <WarningButton label="Warning (Extended)" onClick={() => {}} />
-              </div>
+            right={
+              <ComponentCodeLayout
+                component={
+                  <div className="space-y-2">
+                    <GoodButton label="Base Button" onClick={() => {}} />
+                    <SuccessButton label="Success (Extended)" onClick={() => {}} />
+                    <WarningButton label="Warning (Extended)" onClick={() => {}} />
+                  </div>
+                }
+                code={goodCode}
+                title="✅ Good Component"
+                description="Extended without modifying base component"
+              />
             }
-            code={goodCode}
-            title="✅ Good Component"
-            description="Extended without modifying base component"
           />
-        }
-      />
+        </TabsContent>
+        <TabsContent value="advanced" className="min-h-0 flex-1">
+          <SplitLayout
+            left={
+              <ComponentCodeLayout
+                code={advancedBadCode}
+                component={<AdvancedBadNotifier />}
+                description="Must modify switch statement to add new notification types"
+                title="❌ Bad Component"
+              />
+            }
+            right={
+              <ComponentCodeLayout
+                code={advancedGoodCode}
+                component={<AdvancedGoodNotifier />}
+                description="New notifiers added by creating new components, no modification needed"
+                title="✅ Good Component"
+              />
+            }
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   </div>
 );

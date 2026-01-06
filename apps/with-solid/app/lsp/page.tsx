@@ -7,10 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@repo/design-system/components/ui/tabs";
 import { SplitLayout } from "@/components/split-layout";
 import { ComponentCodeLayout } from "@/components/component-code-layout";
 import { Card as BadCard } from "./components/bad-card";
 import { BaseCard, ClickableCard, HoverableCard } from "./components/good-card";
+import { AdvancedBadPayment } from "./components/advanced-bad-payment";
+import { AdvancedGoodPayment } from "./components/advanced-good-payment";
 
 const badCode = `"use client";
 
@@ -88,6 +96,83 @@ export const HoverableCard = ({ title, children, ...props }: BaseCardProps & Com
   );
 };`;
 
+const advancedBadCode = `"use client";
+
+type Payment = {
+  amount: number;
+  process: () => void;
+};
+
+/**
+ * ❌ BAD: CreditCardPayment violates LSP
+ * Cannot substitute Payment - throws error
+ */
+export const AdvancedBadPayment = () => {
+  const processPayment = (payment: Payment) => {
+    payment.process(); // Should work for all types
+  };
+
+  const creditCardPayment: Payment = {
+    amount: 100,
+    process: () => {
+      // Violates LSP: Throws instead of processing
+      throw new Error("Credit card processing not implemented");
+    },
+  };
+
+  // This breaks when used in place of Payment
+  return <div>...</div>;
+};`;
+
+const advancedGoodCode = `// Payment Interface (abstraction)
+type Payment = {
+  amount: number;
+  process: () => void;
+};
+
+// CashPayment - ✅ Substitutable
+export class CashPayment implements Payment {
+  constructor(public amount: number) {}
+  process() {
+    console.log(\`Processing cash payment of $\${this.amount}\`);
+  }
+}
+
+// CreditCardPayment - ✅ Substitutable
+export class CreditCardPayment implements Payment {
+  constructor(
+    public amount: number,
+    private cardNumber: string
+  ) {}
+  process() {
+    console.log(\`Processing credit card payment of $\${this.amount}\`);
+  }
+}
+
+// PayPalPayment - ✅ Substitutable
+export class PayPalPayment implements Payment {
+  constructor(
+    public amount: number,
+    private email: string
+  ) {}
+  process() {
+    console.log(\`Processing PayPal payment of $\${this.amount}\`);
+  }
+}
+
+// Usage - all types are substitutable
+const processPayment = (payment: Payment) => {
+  payment.process(); // Works for all payment types
+};
+
+const payments: Payment[] = [
+  new CashPayment(100),
+  new CreditCardPayment(100, "1234-5678"),
+  new PayPalPayment(100, "user@example.com"),
+];
+
+payments.forEach(processPayment); // ✅ All work correctly`;
+
 const LSPPage = () => (
   <div className="flex min-h-[calc(100vh-4rem)] flex-col">
     <div className="shrink-0 p-6">
@@ -121,44 +206,72 @@ const LSPPage = () => (
       </Card>
     </div>
 
-    <div className="flex-1">
-      <SplitLayout
-        left={
-          <ComponentCodeLayout
-            component={
-              <div className="space-y-2">
-                <BadCard title="Base Card">Can be used here</BadCard>
-              </div>
+    <div className="flex-1 p-6 pt-0">
+      <Tabs className="flex h-full flex-col" defaultValue="basic">
+        <TabsList className="mb-4">
+          <TabsTrigger value="basic">Basic Examples</TabsTrigger>
+          <TabsTrigger value="advanced">Advanced Examples</TabsTrigger>
+        </TabsList>
+        <TabsContent className="min-h-0 flex-1" value="basic">
+          <SplitLayout
+            left={
+              <ComponentCodeLayout
+                component={
+                  <div className="space-y-2">
+                    <BadCard title="Base Card">Can be used here</BadCard>
+                  </div>
+                }
+                code={badCode}
+                title="❌ Bad Component"
+                description="ClickableCard requires onClick prop, cannot substitute base Card"
+              />
             }
-            code={badCode}
-            title="❌ Bad Component"
-            description="ClickableCard requires onClick prop, cannot substitute base Card"
-          />
-        }
-        right={
-          <ComponentCodeLayout
-            component={
-              <div className="space-y-2">
-                <BaseCard title="Base Card">Base implementation</BaseCard>
-                <ClickableCard
-                  title="Clickable Card"
-                  onClick={() => {
-                    console.log("Clicked!");
-                  }}
-                >
-                  Can substitute BaseCard
-                </ClickableCard>
-                <HoverableCard title="Hoverable Card">
-                  Also substitutable
-                </HoverableCard>
-              </div>
+            right={
+              <ComponentCodeLayout
+                component={
+                  <div className="space-y-2">
+                    <BaseCard title="Base Card">Base implementation</BaseCard>
+                    <ClickableCard
+                      title="Clickable Card"
+                      onClick={() => {
+                        console.log("Clicked!");
+                      }}
+                    >
+                      Can substitute BaseCard
+                    </ClickableCard>
+                    <HoverableCard title="Hoverable Card">
+                      Also substitutable
+                    </HoverableCard>
+                  </div>
+                }
+                code={goodCode}
+                title="✅ Good Component"
+                description="All variants can be used interchangeably"
+              />
             }
-            code={goodCode}
-            title="✅ Good Component"
-            description="All variants can be used interchangeably"
           />
-        }
-      />
+        </TabsContent>
+        <TabsContent className="min-h-0 flex-1" value="advanced">
+          <SplitLayout
+            left={
+              <ComponentCodeLayout
+                code={advancedBadCode}
+                component={<AdvancedBadPayment />}
+                description="CreditCardPayment throws error, cannot substitute Payment"
+                title="❌ Bad Component"
+              />
+            }
+            right={
+              <ComponentCodeLayout
+                code={advancedGoodCode}
+                component={<AdvancedGoodPayment />}
+                description="All payment types are substitutable and work correctly"
+                title="✅ Good Component"
+              />
+            }
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   </div>
 );

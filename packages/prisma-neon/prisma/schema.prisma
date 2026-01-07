@@ -64,7 +64,7 @@ model note_chunks {
   created_at  DateTime?              @default(now()) @db.Timestamp(6)
   end_time    Float?
 
-  @@index([embedding])
+  @@index([note_id, chunk_index])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -193,7 +193,7 @@ model video_chunks {
   chunk_index Int
   created_at  DateTime?              @default(now()) @db.Timestamp(6)
 
-  @@index([embedding])
+  @@index([video_id, chunk_index])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

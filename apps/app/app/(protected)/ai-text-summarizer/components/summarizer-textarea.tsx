@@ -3,42 +3,37 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { Loader2, Sparkles } from "lucide-react";
-import { useState } from "react";
-import { generateSummary } from "@/actions/generate-summary";
+import { useState, useTransition } from "react";
+import { createNote } from "@/actions/create-note";
 
 const MAX_LENGTH = 100_000;
 
 export function SummarizerTextarea() {
   const [text, setText] = useState("");
-  const [summary, setSummary] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
-  const handleGenerateSummary = async () => {
+  const handleSubmit = () => {
     if (!text.trim()) {
       setError("Please enter some text to summarize");
       return;
     }
 
-    setIsLoading(true);
     setError(null);
-    setSummary("");
 
-    try {
-      const result = await generateSummary({ text });
-
-      if (result.success && result.data) {
-        setSummary(result.data);
-      } else {
-        setError(result.error || "Failed to generate summary");
-      }
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unexpected error occurred"
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    startTransition(() => {
+      createNote({ text })
+        .then((createNoteResult) => {
+          if (!createNoteResult.success) {
+            setError(createNoteResult.error || "Failed to create note");
+          }
+          // If successful, createNote will redirect, so we don't need to handle success here
+        })
+        .catch((err) => {
+          console.error("Error creating note:", err);
+          setError("Failed to create note");
+        });
+    });
   };
 
   const characterCount = text.length;
@@ -48,7 +43,7 @@ export function SummarizerTextarea() {
       <div className="space-y-2">
         <Textarea
           className="min-h-[400px] resize-y"
-          disabled={isLoading}
+          disabled={isPending}
           maxLength={MAX_LENGTH}
           onChange={(e) => {
             setText(e.target.value);
@@ -60,18 +55,18 @@ export function SummarizerTextarea() {
         <div className="space-y-2">
           <Button
             className="w-full"
-            disabled={isLoading || !text.trim()}
-            onClick={handleGenerateSummary}
+            disabled={isPending || !text.trim()}
+            onClick={handleSubmit}
           >
-            {isLoading ? (
+            {isPending ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
-                Generating...
+                Processing...
               </>
             ) : (
               <>
                 <Sparkles className="mr-2 size-4" />
-                Generate Summary
+                Create Note & Summarize
               </>
             )}
           </Button>
@@ -83,16 +78,6 @@ export function SummarizerTextarea() {
         </div>
         {error !== null && <p className="text-destructive text-sm">{error}</p>}
       </div>
-      {summary !== "" && (
-        <div className="space-y-2">
-          <h2 className="font-semibold text-lg">Summary</h2>
-          <div className="rounded-lg border bg-card p-4">
-            <p className="whitespace-pre-wrap text-sm leading-relaxed">
-              {summary}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -28,17 +28,15 @@ export type AggregateQuizzes = {
 
 export type QuizzesAvgAggregateOutputType = {
   id: number | null
-  note_id: number | null
 }
 
 export type QuizzesSumAggregateOutputType = {
   id: number | null
-  note_id: number | null
 }
 
 export type QuizzesMinAggregateOutputType = {
   id: number | null
-  note_id: number | null
+  note_id: string | null
   user_id: string | null
   title: string | null
   description: string | null
@@ -48,7 +46,7 @@ export type QuizzesMinAggregateOutputType = {
 
 export type QuizzesMaxAggregateOutputType = {
   id: number | null
-  note_id: number | null
+  note_id: string | null
   user_id: string | null
   title: string | null
   description: string | null
@@ -70,12 +68,10 @@ export type QuizzesCountAggregateOutputType = {
 
 export type QuizzesAvgAggregateInputType = {
   id?: true
-  note_id?: true
 }
 
 export type QuizzesSumAggregateInputType = {
   id?: true
-  note_id?: true
 }
 
 export type QuizzesMinAggregateInputType = {
@@ -197,7 +193,7 @@ export type quizzesGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type QuizzesGroupByOutputType = {
   id: number
-  note_id: number
+  note_id: string
   user_id: string | null
   title: string
   description: string | null
@@ -230,7 +226,7 @@ export type quizzesWhereInput = {
   OR?: Prisma.quizzesWhereInput[]
   NOT?: Prisma.quizzesWhereInput | Prisma.quizzesWhereInput[]
   id?: Prisma.IntFilter<"quizzes"> | number
-  note_id?: Prisma.IntFilter<"quizzes"> | number
+  note_id?: Prisma.UuidFilter<"quizzes"> | string
   user_id?: Prisma.UuidNullableFilter<"quizzes"> | string | null
   title?: Prisma.StringFilter<"quizzes"> | string
   description?: Prisma.StringNullableFilter<"quizzes"> | string | null
@@ -250,7 +246,7 @@ export type quizzesOrderByWithRelationInput = {
 
 export type quizzesWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  note_id?: number
+  note_id?: string
   AND?: Prisma.quizzesWhereInput | Prisma.quizzesWhereInput[]
   OR?: Prisma.quizzesWhereInput[]
   NOT?: Prisma.quizzesWhereInput | Prisma.quizzesWhereInput[]
@@ -281,7 +277,7 @@ export type quizzesScalarWhereWithAggregatesInput = {
   OR?: Prisma.quizzesScalarWhereWithAggregatesInput[]
   NOT?: Prisma.quizzesScalarWhereWithAggregatesInput | Prisma.quizzesScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"quizzes"> | number
-  note_id?: Prisma.IntWithAggregatesFilter<"quizzes"> | number
+  note_id?: Prisma.UuidWithAggregatesFilter<"quizzes"> | string
   user_id?: Prisma.UuidNullableWithAggregatesFilter<"quizzes"> | string | null
   title?: Prisma.StringWithAggregatesFilter<"quizzes"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"quizzes"> | string | null
@@ -290,7 +286,7 @@ export type quizzesScalarWhereWithAggregatesInput = {
 }
 
 export type quizzesCreateInput = {
-  note_id: number
+  note_id: string
   user_id?: string | null
   title: string
   description?: string | null
@@ -300,7 +296,7 @@ export type quizzesCreateInput = {
 
 export type quizzesUncheckedCreateInput = {
   id?: number
-  note_id: number
+  note_id: string
   user_id?: string | null
   title: string
   description?: string | null
@@ -309,7 +305,7 @@ export type quizzesUncheckedCreateInput = {
 }
 
 export type quizzesUpdateInput = {
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -319,7 +315,7 @@ export type quizzesUpdateInput = {
 
 export type quizzesUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -329,7 +325,7 @@ export type quizzesUncheckedUpdateInput = {
 
 export type quizzesCreateManyInput = {
   id?: number
-  note_id: number
+  note_id: string
   user_id?: string | null
   title: string
   description?: string | null
@@ -338,7 +334,7 @@ export type quizzesCreateManyInput = {
 }
 
 export type quizzesUpdateManyMutationInput = {
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -348,7 +344,7 @@ export type quizzesUpdateManyMutationInput = {
 
 export type quizzesUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -368,7 +364,6 @@ export type quizzesCountOrderByAggregateInput = {
 
 export type quizzesAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  note_id?: Prisma.SortOrder
 }
 
 export type quizzesMaxOrderByAggregateInput = {
@@ -393,7 +388,6 @@ export type quizzesMinOrderByAggregateInput = {
 
 export type quizzesSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  note_id?: Prisma.SortOrder
 }
 
 
@@ -445,7 +439,7 @@ export type $quizzesPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    note_id: number
+    note_id: string
     user_id: string | null
     title: string
     description: string | null
@@ -875,7 +869,7 @@ export interface Prisma__quizzesClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface quizzesFieldRefs {
   readonly id: Prisma.FieldRef<"quizzes", 'Int'>
-  readonly note_id: Prisma.FieldRef<"quizzes", 'Int'>
+  readonly note_id: Prisma.FieldRef<"quizzes", 'String'>
   readonly user_id: Prisma.FieldRef<"quizzes", 'String'>
   readonly title: Prisma.FieldRef<"quizzes", 'String'>
   readonly description: Prisma.FieldRef<"quizzes", 'String'>

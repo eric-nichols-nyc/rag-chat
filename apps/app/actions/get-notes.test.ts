@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { getNotes } from "../get-notes";
+import { getNotes } from "./get-notes";
 
 // Mock the dependencies
 vi.mock("@neondatabase/neon-js/auth/next/server", () => ({

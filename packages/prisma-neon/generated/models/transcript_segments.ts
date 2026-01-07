@@ -28,7 +28,6 @@ export type AggregateTranscript_segments = {
 
 export type Transcript_segmentsAvgAggregateOutputType = {
   id: number | null
-  note_id: number | null
   start_time: number | null
   duration: number | null
   segment_index: number | null
@@ -36,7 +35,6 @@ export type Transcript_segmentsAvgAggregateOutputType = {
 
 export type Transcript_segmentsSumAggregateOutputType = {
   id: number | null
-  note_id: number | null
   start_time: number | null
   duration: number | null
   segment_index: number | null
@@ -44,7 +42,7 @@ export type Transcript_segmentsSumAggregateOutputType = {
 
 export type Transcript_segmentsMinAggregateOutputType = {
   id: number | null
-  note_id: number | null
+  note_id: string | null
   text: string | null
   start_time: number | null
   duration: number | null
@@ -54,7 +52,7 @@ export type Transcript_segmentsMinAggregateOutputType = {
 
 export type Transcript_segmentsMaxAggregateOutputType = {
   id: number | null
-  note_id: number | null
+  note_id: string | null
   text: string | null
   start_time: number | null
   duration: number | null
@@ -76,7 +74,6 @@ export type Transcript_segmentsCountAggregateOutputType = {
 
 export type Transcript_segmentsAvgAggregateInputType = {
   id?: true
-  note_id?: true
   start_time?: true
   duration?: true
   segment_index?: true
@@ -84,7 +81,6 @@ export type Transcript_segmentsAvgAggregateInputType = {
 
 export type Transcript_segmentsSumAggregateInputType = {
   id?: true
-  note_id?: true
   start_time?: true
   duration?: true
   segment_index?: true
@@ -209,7 +205,7 @@ export type transcript_segmentsGroupByArgs<ExtArgs extends runtime.Types.Extensi
 
 export type Transcript_segmentsGroupByOutputType = {
   id: number
-  note_id: number
+  note_id: string
   text: string
   start_time: number
   duration: number
@@ -242,7 +238,7 @@ export type transcript_segmentsWhereInput = {
   OR?: Prisma.transcript_segmentsWhereInput[]
   NOT?: Prisma.transcript_segmentsWhereInput | Prisma.transcript_segmentsWhereInput[]
   id?: Prisma.IntFilter<"transcript_segments"> | number
-  note_id?: Prisma.IntFilter<"transcript_segments"> | number
+  note_id?: Prisma.UuidFilter<"transcript_segments"> | string
   text?: Prisma.StringFilter<"transcript_segments"> | string
   start_time?: Prisma.FloatFilter<"transcript_segments"> | number
   duration?: Prisma.FloatFilter<"transcript_segments"> | number
@@ -265,7 +261,7 @@ export type transcript_segmentsWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.transcript_segmentsWhereInput | Prisma.transcript_segmentsWhereInput[]
   OR?: Prisma.transcript_segmentsWhereInput[]
   NOT?: Prisma.transcript_segmentsWhereInput | Prisma.transcript_segmentsWhereInput[]
-  note_id?: Prisma.IntFilter<"transcript_segments"> | number
+  note_id?: Prisma.UuidFilter<"transcript_segments"> | string
   text?: Prisma.StringFilter<"transcript_segments"> | string
   start_time?: Prisma.FloatFilter<"transcript_segments"> | number
   duration?: Prisma.FloatFilter<"transcript_segments"> | number
@@ -293,7 +289,7 @@ export type transcript_segmentsScalarWhereWithAggregatesInput = {
   OR?: Prisma.transcript_segmentsScalarWhereWithAggregatesInput[]
   NOT?: Prisma.transcript_segmentsScalarWhereWithAggregatesInput | Prisma.transcript_segmentsScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"transcript_segments"> | number
-  note_id?: Prisma.IntWithAggregatesFilter<"transcript_segments"> | number
+  note_id?: Prisma.UuidWithAggregatesFilter<"transcript_segments"> | string
   text?: Prisma.StringWithAggregatesFilter<"transcript_segments"> | string
   start_time?: Prisma.FloatWithAggregatesFilter<"transcript_segments"> | number
   duration?: Prisma.FloatWithAggregatesFilter<"transcript_segments"> | number
@@ -302,7 +298,7 @@ export type transcript_segmentsScalarWhereWithAggregatesInput = {
 }
 
 export type transcript_segmentsCreateInput = {
-  note_id: number
+  note_id: string
   text: string
   start_time: number
   duration: number
@@ -312,7 +308,7 @@ export type transcript_segmentsCreateInput = {
 
 export type transcript_segmentsUncheckedCreateInput = {
   id?: number
-  note_id: number
+  note_id: string
   text: string
   start_time: number
   duration: number
@@ -321,7 +317,7 @@ export type transcript_segmentsUncheckedCreateInput = {
 }
 
 export type transcript_segmentsUpdateInput = {
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   start_time?: Prisma.FloatFieldUpdateOperationsInput | number
   duration?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -331,7 +327,7 @@ export type transcript_segmentsUpdateInput = {
 
 export type transcript_segmentsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   start_time?: Prisma.FloatFieldUpdateOperationsInput | number
   duration?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -341,7 +337,7 @@ export type transcript_segmentsUncheckedUpdateInput = {
 
 export type transcript_segmentsCreateManyInput = {
   id?: number
-  note_id: number
+  note_id: string
   text: string
   start_time: number
   duration: number
@@ -350,7 +346,7 @@ export type transcript_segmentsCreateManyInput = {
 }
 
 export type transcript_segmentsUpdateManyMutationInput = {
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   start_time?: Prisma.FloatFieldUpdateOperationsInput | number
   duration?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -360,7 +356,7 @@ export type transcript_segmentsUpdateManyMutationInput = {
 
 export type transcript_segmentsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   start_time?: Prisma.FloatFieldUpdateOperationsInput | number
   duration?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -380,7 +376,6 @@ export type transcript_segmentsCountOrderByAggregateInput = {
 
 export type transcript_segmentsAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  note_id?: Prisma.SortOrder
   start_time?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   segment_index?: Prisma.SortOrder
@@ -408,7 +403,6 @@ export type transcript_segmentsMinOrderByAggregateInput = {
 
 export type transcript_segmentsSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  note_id?: Prisma.SortOrder
   start_time?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   segment_index?: Prisma.SortOrder
@@ -471,7 +465,7 @@ export type $transcript_segmentsPayload<ExtArgs extends runtime.Types.Extensions
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    note_id: number
+    note_id: string
     text: string
     start_time: number
     duration: number
@@ -901,7 +895,7 @@ export interface Prisma__transcript_segmentsClient<T, Null = never, ExtArgs exte
  */
 export interface transcript_segmentsFieldRefs {
   readonly id: Prisma.FieldRef<"transcript_segments", 'Int'>
-  readonly note_id: Prisma.FieldRef<"transcript_segments", 'Int'>
+  readonly note_id: Prisma.FieldRef<"transcript_segments", 'String'>
   readonly text: Prisma.FieldRef<"transcript_segments", 'String'>
   readonly start_time: Prisma.FieldRef<"transcript_segments", 'Float'>
   readonly duration: Prisma.FieldRef<"transcript_segments", 'Float'>

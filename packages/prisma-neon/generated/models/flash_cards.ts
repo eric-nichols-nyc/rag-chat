@@ -28,19 +28,17 @@ export type AggregateFlash_cards = {
 
 export type Flash_cardsAvgAggregateOutputType = {
   id: number | null
-  note_id: number | null
   order_index: number | null
 }
 
 export type Flash_cardsSumAggregateOutputType = {
   id: number | null
-  note_id: number | null
   order_index: number | null
 }
 
 export type Flash_cardsMinAggregateOutputType = {
   id: number | null
-  note_id: number | null
+  note_id: string | null
   user_id: string | null
   front_text: string | null
   back_text: string | null
@@ -51,7 +49,7 @@ export type Flash_cardsMinAggregateOutputType = {
 
 export type Flash_cardsMaxAggregateOutputType = {
   id: number | null
-  note_id: number | null
+  note_id: string | null
   user_id: string | null
   front_text: string | null
   back_text: string | null
@@ -75,13 +73,11 @@ export type Flash_cardsCountAggregateOutputType = {
 
 export type Flash_cardsAvgAggregateInputType = {
   id?: true
-  note_id?: true
   order_index?: true
 }
 
 export type Flash_cardsSumAggregateInputType = {
   id?: true
-  note_id?: true
   order_index?: true
 }
 
@@ -207,7 +203,7 @@ export type flash_cardsGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type Flash_cardsGroupByOutputType = {
   id: number
-  note_id: number
+  note_id: string
   user_id: string | null
   front_text: string
   back_text: string
@@ -241,7 +237,7 @@ export type flash_cardsWhereInput = {
   OR?: Prisma.flash_cardsWhereInput[]
   NOT?: Prisma.flash_cardsWhereInput | Prisma.flash_cardsWhereInput[]
   id?: Prisma.IntFilter<"flash_cards"> | number
-  note_id?: Prisma.IntFilter<"flash_cards"> | number
+  note_id?: Prisma.UuidFilter<"flash_cards"> | string
   user_id?: Prisma.UuidNullableFilter<"flash_cards"> | string | null
   front_text?: Prisma.StringFilter<"flash_cards"> | string
   back_text?: Prisma.StringFilter<"flash_cards"> | string
@@ -266,7 +262,7 @@ export type flash_cardsWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.flash_cardsWhereInput | Prisma.flash_cardsWhereInput[]
   OR?: Prisma.flash_cardsWhereInput[]
   NOT?: Prisma.flash_cardsWhereInput | Prisma.flash_cardsWhereInput[]
-  note_id?: Prisma.IntFilter<"flash_cards"> | number
+  note_id?: Prisma.UuidFilter<"flash_cards"> | string
   user_id?: Prisma.UuidNullableFilter<"flash_cards"> | string | null
   front_text?: Prisma.StringFilter<"flash_cards"> | string
   back_text?: Prisma.StringFilter<"flash_cards"> | string
@@ -296,7 +292,7 @@ export type flash_cardsScalarWhereWithAggregatesInput = {
   OR?: Prisma.flash_cardsScalarWhereWithAggregatesInput[]
   NOT?: Prisma.flash_cardsScalarWhereWithAggregatesInput | Prisma.flash_cardsScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"flash_cards"> | number
-  note_id?: Prisma.IntWithAggregatesFilter<"flash_cards"> | number
+  note_id?: Prisma.UuidWithAggregatesFilter<"flash_cards"> | string
   user_id?: Prisma.UuidNullableWithAggregatesFilter<"flash_cards"> | string | null
   front_text?: Prisma.StringWithAggregatesFilter<"flash_cards"> | string
   back_text?: Prisma.StringWithAggregatesFilter<"flash_cards"> | string
@@ -306,7 +302,7 @@ export type flash_cardsScalarWhereWithAggregatesInput = {
 }
 
 export type flash_cardsCreateInput = {
-  note_id: number
+  note_id: string
   user_id?: string | null
   front_text: string
   back_text: string
@@ -317,7 +313,7 @@ export type flash_cardsCreateInput = {
 
 export type flash_cardsUncheckedCreateInput = {
   id?: number
-  note_id: number
+  note_id: string
   user_id?: string | null
   front_text: string
   back_text: string
@@ -327,7 +323,7 @@ export type flash_cardsUncheckedCreateInput = {
 }
 
 export type flash_cardsUpdateInput = {
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   front_text?: Prisma.StringFieldUpdateOperationsInput | string
   back_text?: Prisma.StringFieldUpdateOperationsInput | string
@@ -338,7 +334,7 @@ export type flash_cardsUpdateInput = {
 
 export type flash_cardsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   front_text?: Prisma.StringFieldUpdateOperationsInput | string
   back_text?: Prisma.StringFieldUpdateOperationsInput | string
@@ -349,7 +345,7 @@ export type flash_cardsUncheckedUpdateInput = {
 
 export type flash_cardsCreateManyInput = {
   id?: number
-  note_id: number
+  note_id: string
   user_id?: string | null
   front_text: string
   back_text: string
@@ -359,7 +355,7 @@ export type flash_cardsCreateManyInput = {
 }
 
 export type flash_cardsUpdateManyMutationInput = {
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   front_text?: Prisma.StringFieldUpdateOperationsInput | string
   back_text?: Prisma.StringFieldUpdateOperationsInput | string
@@ -370,7 +366,7 @@ export type flash_cardsUpdateManyMutationInput = {
 
 export type flash_cardsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   front_text?: Prisma.StringFieldUpdateOperationsInput | string
   back_text?: Prisma.StringFieldUpdateOperationsInput | string
@@ -392,7 +388,6 @@ export type flash_cardsCountOrderByAggregateInput = {
 
 export type flash_cardsAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  note_id?: Prisma.SortOrder
   order_index?: Prisma.SortOrder
 }
 
@@ -420,16 +415,15 @@ export type flash_cardsMinOrderByAggregateInput = {
 
 export type flash_cardsSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  note_id?: Prisma.SortOrder
   order_index?: Prisma.SortOrder
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 
@@ -485,7 +479,7 @@ export type $flash_cardsPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    note_id: number
+    note_id: string
     user_id: string | null
     front_text: string
     back_text: string
@@ -916,7 +910,7 @@ export interface Prisma__flash_cardsClient<T, Null = never, ExtArgs extends runt
  */
 export interface flash_cardsFieldRefs {
   readonly id: Prisma.FieldRef<"flash_cards", 'Int'>
-  readonly note_id: Prisma.FieldRef<"flash_cards", 'Int'>
+  readonly note_id: Prisma.FieldRef<"flash_cards", 'String'>
   readonly user_id: Prisma.FieldRef<"flash_cards", 'String'>
   readonly front_text: Prisma.FieldRef<"flash_cards", 'String'>
   readonly back_text: Prisma.FieldRef<"flash_cards", 'String'>

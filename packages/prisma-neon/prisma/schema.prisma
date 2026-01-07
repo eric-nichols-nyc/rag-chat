@@ -42,7 +42,7 @@ model flash_card_sessions {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model flash_cards {
   id          Int       @id @default(autoincrement())
-  note_id     Int
+  note_id     String    @db.Uuid
   user_id     String?   @db.Uuid
   front_text  String
   back_text   String
@@ -57,7 +57,7 @@ model flash_cards {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model note_chunks {
   id          Int                    @id @default(autoincrement())
-  note_id     Int
+  note_id     String                 @db.Uuid
   content     String
   embedding   Unsupported("vector")?
   chunk_index Int
@@ -69,7 +69,7 @@ model note_chunks {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model notes {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid()) @db.Uuid
   title       String
   content     String
   tags        String[]  @default([])
@@ -160,7 +160,7 @@ model quiz_questions {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model quizzes {
   id          Int       @id @default(autoincrement())
-  note_id     Int       @unique
+  note_id     String    @unique @db.Uuid
   user_id     String?   @db.Uuid
   title       String
   description String?
@@ -174,7 +174,7 @@ model quizzes {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model transcript_segments {
   id            Int       @id @default(autoincrement())
-  note_id       Int
+  note_id       String    @db.Uuid
   text          String
   start_time    Float
   duration      Float

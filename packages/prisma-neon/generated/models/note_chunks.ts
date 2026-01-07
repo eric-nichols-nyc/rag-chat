@@ -28,21 +28,19 @@ export type AggregateNote_chunks = {
 
 export type Note_chunksAvgAggregateOutputType = {
   id: number | null
-  note_id: number | null
   chunk_index: number | null
   end_time: number | null
 }
 
 export type Note_chunksSumAggregateOutputType = {
   id: number | null
-  note_id: number | null
   chunk_index: number | null
   end_time: number | null
 }
 
 export type Note_chunksMinAggregateOutputType = {
   id: number | null
-  note_id: number | null
+  note_id: string | null
   content: string | null
   chunk_index: number | null
   created_at: Date | null
@@ -51,7 +49,7 @@ export type Note_chunksMinAggregateOutputType = {
 
 export type Note_chunksMaxAggregateOutputType = {
   id: number | null
-  note_id: number | null
+  note_id: string | null
   content: string | null
   chunk_index: number | null
   created_at: Date | null
@@ -71,14 +69,12 @@ export type Note_chunksCountAggregateOutputType = {
 
 export type Note_chunksAvgAggregateInputType = {
   id?: true
-  note_id?: true
   chunk_index?: true
   end_time?: true
 }
 
 export type Note_chunksSumAggregateInputType = {
   id?: true
-  note_id?: true
   chunk_index?: true
   end_time?: true
 }
@@ -199,7 +195,7 @@ export type note_chunksGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type Note_chunksGroupByOutputType = {
   id: number
-  note_id: number
+  note_id: string
   content: string
   chunk_index: number
   created_at: Date | null
@@ -231,7 +227,7 @@ export type note_chunksWhereInput = {
   OR?: Prisma.note_chunksWhereInput[]
   NOT?: Prisma.note_chunksWhereInput | Prisma.note_chunksWhereInput[]
   id?: Prisma.IntFilter<"note_chunks"> | number
-  note_id?: Prisma.IntFilter<"note_chunks"> | number
+  note_id?: Prisma.UuidFilter<"note_chunks"> | string
   content?: Prisma.StringFilter<"note_chunks"> | string
   chunk_index?: Prisma.IntFilter<"note_chunks"> | number
   created_at?: Prisma.DateTimeNullableFilter<"note_chunks"> | Date | string | null
@@ -252,7 +248,7 @@ export type note_chunksWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.note_chunksWhereInput | Prisma.note_chunksWhereInput[]
   OR?: Prisma.note_chunksWhereInput[]
   NOT?: Prisma.note_chunksWhereInput | Prisma.note_chunksWhereInput[]
-  note_id?: Prisma.IntFilter<"note_chunks"> | number
+  note_id?: Prisma.UuidFilter<"note_chunks"> | string
   content?: Prisma.StringFilter<"note_chunks"> | string
   chunk_index?: Prisma.IntFilter<"note_chunks"> | number
   created_at?: Prisma.DateTimeNullableFilter<"note_chunks"> | Date | string | null
@@ -278,7 +274,7 @@ export type note_chunksScalarWhereWithAggregatesInput = {
   OR?: Prisma.note_chunksScalarWhereWithAggregatesInput[]
   NOT?: Prisma.note_chunksScalarWhereWithAggregatesInput | Prisma.note_chunksScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"note_chunks"> | number
-  note_id?: Prisma.IntWithAggregatesFilter<"note_chunks"> | number
+  note_id?: Prisma.UuidWithAggregatesFilter<"note_chunks"> | string
   content?: Prisma.StringWithAggregatesFilter<"note_chunks"> | string
   chunk_index?: Prisma.IntWithAggregatesFilter<"note_chunks"> | number
   created_at?: Prisma.DateTimeNullableWithAggregatesFilter<"note_chunks"> | Date | string | null
@@ -286,7 +282,7 @@ export type note_chunksScalarWhereWithAggregatesInput = {
 }
 
 export type note_chunksCreateInput = {
-  note_id: number
+  note_id: string
   content: string
   chunk_index: number
   created_at?: Date | string | null
@@ -295,7 +291,7 @@ export type note_chunksCreateInput = {
 
 export type note_chunksUncheckedCreateInput = {
   id?: number
-  note_id: number
+  note_id: string
   content: string
   chunk_index: number
   created_at?: Date | string | null
@@ -303,7 +299,7 @@ export type note_chunksUncheckedCreateInput = {
 }
 
 export type note_chunksUpdateInput = {
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   chunk_index?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -312,7 +308,7 @@ export type note_chunksUpdateInput = {
 
 export type note_chunksUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   chunk_index?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -321,7 +317,7 @@ export type note_chunksUncheckedUpdateInput = {
 
 export type note_chunksCreateManyInput = {
   id?: number
-  note_id: number
+  note_id: string
   content: string
   chunk_index: number
   created_at?: Date | string | null
@@ -329,7 +325,7 @@ export type note_chunksCreateManyInput = {
 }
 
 export type note_chunksUpdateManyMutationInput = {
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   chunk_index?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -338,7 +334,7 @@ export type note_chunksUpdateManyMutationInput = {
 
 export type note_chunksUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  note_id?: Prisma.IntFieldUpdateOperationsInput | number
+  note_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   chunk_index?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -356,7 +352,6 @@ export type note_chunksCountOrderByAggregateInput = {
 
 export type note_chunksAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  note_id?: Prisma.SortOrder
   chunk_index?: Prisma.SortOrder
   end_time?: Prisma.SortOrder
 }
@@ -381,7 +376,6 @@ export type note_chunksMinOrderByAggregateInput = {
 
 export type note_chunksSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  note_id?: Prisma.SortOrder
   chunk_index?: Prisma.SortOrder
   end_time?: Prisma.SortOrder
 }
@@ -439,7 +433,7 @@ export type $note_chunksPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    note_id: number
+    note_id: string
     content: string
     chunk_index: number
     created_at: Date | null
@@ -868,7 +862,7 @@ export interface Prisma__note_chunksClient<T, Null = never, ExtArgs extends runt
  */
 export interface note_chunksFieldRefs {
   readonly id: Prisma.FieldRef<"note_chunks", 'Int'>
-  readonly note_id: Prisma.FieldRef<"note_chunks", 'Int'>
+  readonly note_id: Prisma.FieldRef<"note_chunks", 'String'>
   readonly content: Prisma.FieldRef<"note_chunks", 'String'>
   readonly chunk_index: Prisma.FieldRef<"note_chunks", 'Int'>
   readonly created_at: Prisma.FieldRef<"note_chunks", 'DateTime'>

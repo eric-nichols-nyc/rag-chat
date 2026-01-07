@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run linting and type checking before commit
+# Note: We skip running tests here as they can be slow
+# Full tests run via GitHub Actions on push/PR
+
+echo "🔍 Running pre-commit checks..."
+
+# Run biome check (linting/formatting)
+cd apps/app && pnpm exec biome check . || {
+  echo "❌ Linting failed. Please fix errors before committing."
+  exit 1
+}
+
+# Run type checking
+cd apps/app && pnpm typecheck || {
+  echo "❌ Type checking failed. Please fix errors before committing."
+  exit 1
+}
+
+echo "✅ Pre-commit checks passed!"
+

@@ -1,4 +1,5 @@
 import { getNotes } from "@/actions/get-notes";
+import { Navbar } from "../../../components/navbar";
 
 export default async function NotesPage() {
   console.log("NotesPage: Component rendering");
@@ -11,6 +12,7 @@ export default async function NotesPage() {
     return (
       <div className="p-4">
         <h1 className="mb-4 font-bold text-2xl">Notes</h1>
+        <Navbar />
         {result.data.length === 0 ? (
           <p>No notes found</p>
         ) : (
@@ -29,6 +31,7 @@ export default async function NotesPage() {
   return (
     <div className="p-4">
       <h1 className="mb-4 font-bold text-2xl">Notes</h1>
+      <Navbar />
       <p className="text-red-500">Error: {result.error}</p>
     </div>
   );

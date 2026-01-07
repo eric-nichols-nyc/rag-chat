@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client"
   output   = "../generated"
@@ -11,9 +8,199 @@ datasource db {
   relationMode = "prisma"
 }
 
-// This is a stub model.
-// Delete it and add your own Prisma models.
-model Page {
-  id   Int    @id @default(autoincrement())
-  name String
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model flash_card_reviews {
+  id                     Int       @id @default(autoincrement())
+  card_id                Int
+  quality                Int
+  reviewed_at            DateTime? @default(now()) @db.Timestamp(6)
+  time_to_answer_seconds Int?
+
+  @@index([card_id, reviewed_at(sort: Desc)], map: "flash_card_reviews_card_id_idx")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model flash_card_sessions {
+  id                  Int       @id @default(autoincrement())
+  card_id             Int       @unique
+  ease_factor         Decimal?  @default(2.5) @db.Decimal(4, 2)
+  interval_days       Int?      @default(1)
+  repetitions         Int?      @default(0)
+  last_reviewed_at    DateTime? @db.Timestamp(6)
+  next_review_at      DateTime? @default(now()) @db.Timestamp(6)
+  consecutive_correct Int?      @default(0)
+  total_reviews       Int?      @default(0)
+  total_correct       Int?      @default(0)
+  created_at          DateTime? @default(now()) @db.Timestamp(6)
+  updated_at          DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([card_id])
+  @@index([next_review_at], map: "flash_card_sessions_next_review_idx")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model flash_cards {
+  id          Int       @id @default(autoincrement())
+  note_id     Int
+  user_id     String?   @db.Uuid
+  front_text  String
+  back_text   String
+  order_index Int       @default(0)
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([note_id, order_index], map: "flash_cards_note_id_idx")
+  @@index([user_id, order_index], map: "flash_cards_user_id_idx")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model note_chunks {
+  id          Int                    @id @default(autoincrement())
+  note_id     Int
+  content     String
+  embedding   Unsupported("vector")?
+  chunk_index Int
+  created_at  DateTime?              @default(now()) @db.Timestamp(6)
+  end_time    Float?
+
+  @@index([embedding])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model notes {
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String
+  tags        String[]  @default([])
+  source_id   String?
+  summary     String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+  source_type String?
+  file_url    String?
+  user_id     String?   @db.Uuid
+
+  @@index([source_id])
+  @@index([source_type])
+  @@index([tags], type: Gin)
+  @@index([user_id])
+  @@index([user_id, updated_at(sort: Desc)])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model quiz_attempt_answers {
+  id                  Int       @id @default(autoincrement())
+  attempt_id          Int
+  question_id         Int
+  selected_option_ids Int[]
+  answer_text         String?
+  is_correct          Boolean?
+  points_earned       Int?      @default(0)
+  answered_at         DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([attempt_id])
+  @@index([question_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model quiz_attempts {
+  id                 Int       @id @default(autoincrement())
+  quiz_id            Int
+  user_id            String    @db.Uuid
+  started_at         DateTime? @default(now()) @db.Timestamp(6)
+  completed_at       DateTime? @db.Timestamp(6)
+  score              Int?
+  total_points       Int?
+  percentage         Decimal?  @db.Decimal(5, 2)
+  time_taken_seconds Int?
+
+  @@index([quiz_id, started_at(sort: Desc)], map: "quiz_attempts_quiz_id_idx")
+  @@index([user_id, started_at(sort: Desc)], map: "quiz_attempts_user_id_idx")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model quiz_question_answers {
+  id                Int       @id @default(autoincrement())
+  question_id       Int
+  answer_text       String
+  is_case_sensitive Boolean?  @default(false)
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([question_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model quiz_question_options {
+  id          Int       @id @default(autoincrement())
+  question_id Int
+  option_text String
+  is_correct  Boolean   @default(false)
+  order_index Int       @default(0)
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([question_id, order_index], map: "quiz_question_options_question_id_idx")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model quiz_questions {
+  id            Int       @id @default(autoincrement())
+  quiz_id       Int
+  question_text String
+  question_type String
+  order_index   Int       @default(0)
+  explanation   String?
+  points        Int?      @default(1)
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([quiz_id, order_index], map: "quiz_questions_quiz_id_idx")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model quizzes {
+  id          Int       @id @default(autoincrement())
+  note_id     Int       @unique
+  user_id     String?   @db.Uuid
+  title       String
+  description String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([note_id])
+  @@index([user_id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model transcript_segments {
+  id            Int       @id @default(autoincrement())
+  note_id       Int
+  text          String
+  start_time    Float
+  duration      Float
+  segment_index Int
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([note_id, segment_index], map: "transcript_segments_note_id_idx")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model video_chunks {
+  id          Int                    @id @default(autoincrement())
+  video_id    String
+  content     String
+  embedding   Unsupported("vector")?
+  chunk_index Int
+  created_at  DateTime?              @default(now()) @db.Timestamp(6)
+
+  @@index([embedding])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model videos {
+  id         Int       @id @default(autoincrement())
+  video_id   String    @unique
+  title      String
+  summary    String?
+  created_at DateTime? @default(now()) @db.Timestamp(6)
 }

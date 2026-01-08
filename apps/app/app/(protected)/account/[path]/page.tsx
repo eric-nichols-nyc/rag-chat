@@ -17,6 +17,7 @@ export default async function AccountPage({
   return (
     <main className="container p-4 md:p-6">
       <AccountView path={path} />
+      <div>delete user goes here</div>
     </main>
   );
 }

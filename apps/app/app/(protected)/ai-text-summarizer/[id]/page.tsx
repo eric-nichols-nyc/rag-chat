@@ -5,10 +5,8 @@ import { notFound } from "next/navigation";
 import { getNote } from "@/actions/get-note";
 import { processNote } from "@/actions/process-note";
 import { NoteChatbot } from "./components/note-chatbot";
-import { NoteOriginalText } from "./components/note-original-text";
-import { NoteSummary } from "./components/note-summary";
+import { NoteContentTabs } from "./components/note-content-tabs";
 import { PollingWrapper } from "./components/polling-wrapper";
-import { ProcessingStatus } from "./components/processing-status";
 
 type TextSummaryPageProps = {
   params: Promise<{ id: string }>;
@@ -66,18 +64,16 @@ export default async function TextSummaryPage({
             </p>
           </div>
         </div>
-
+        {/*
         <ProcessingStatus
           chunksCount={chunksCount}
           embeddingsCount={embeddingsCount}
           hasSummary={!!note.summary}
           isProcessing={!isProcessingComplete}
-        />
+        /> */}
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <NoteOriginalText content={note.content} />
-
-          <NoteSummary summary={note.summary} />
+          <NoteContentTabs content={note.content} summary={note.summary} />
 
           <div className="lg:col-span-1">
             <NoteChatbot

@@ -1,0 +1,350 @@
+---
+title: Utilities
+description: API reference for utility functions
+---
+
+## Text Processing
+
+### chunkText
+
+Splits text into overlapping chunks for processing.
+
+**Location**: `apps/app/lib/chunk-text.ts`
+
+```typescript
+function chunkText(
+  text: string,
+  chunkSize?: number,
+  overlap?: number
+): string[]
+```
+
+**Parameters**:
+- `text` (string): The text to chunk
+- `chunkSize` (number, optional): Characters per chunk (default: 1000)
+- `overlap` (number, optional): Characters to overlap (default: 200)
+
+**Returns**: Array of text chunks
+
+**Example**:
+```typescript
+const text = "Very long document...";
+const chunks = chunkText(text, 500, 100);
+console.log(chunks.length); // Number of chunks
+```
+
+**Algorithm**:
+1. Start at position 0
+2. Create chunk of `chunkSize` characters
+3. Move forward by `chunkSize - overlap`
+4. Repeat until end of text
+
+---
+
+## Embeddings
+
+### generateEmbedding
+
+Generates a vector embedding for text using OpenAI.
+
+**Location**: `apps/app/lib/generate-embedding.ts`
+
+```typescript
+async function generateEmbedding(text: string): Promise<number[]>
+```
+
+**Parameters**:
+- `text` (string): The text to embed
+
+**Returns**: Promise resolving to a 1536-dimensional vector
+
+**Model**: `text-embedding-3-small`
+
+**Example**:
+```typescript
+const embedding = await generateEmbedding("Hello world");
+console.log(embedding.length); // 1536
+```
+
+**Cost**: ~$0.00002 per 1K tokens
+
+**Rate Limits**:
+- 3,000 requests per minute
+- 1,000,000 tokens per minute
+
+---
+
+## Vector Operations
+
+### cosineSimilarity
+
+Calculates cosine similarity between two vectors.
+
+**Location**: `apps/app/lib/vector-utils.ts`
+
+```typescript
+function cosineSimilarity(vecA: number[], vecB: number[]): number
+```
+
+**Parameters**:
+- `vecA` (number[]): First vector
+- `vecB` (number[]): Second vector
+
+**Returns**: Similarity score between -1 and 1 (1 = identical)
+
+**Example**:
+```typescript
+const similarity = cosineSimilarity(embedding1, embedding2);
+if (similarity > 0.8) {
+  console.log("Very similar!");
+}
+```
+
+**Formula**:
+```
+similarity = (A · B) / (||A|| * ||B||)
+```
+
+---
+
+### normalizeVector
+
+Normalizes a vector to unit length.
+
+**Location**: `apps/app/lib/vector-utils.ts`
+
+```typescript
+function normalizeVector(vector: number[]): number[]
+```
+
+**Parameters**:
+- `vector` (number[]): The vector to normalize
+
+**Returns**: Normalized vector with length 1
+
+**Example**:
+```typescript
+const normalized = normalizeVector([3, 4]);
+// Returns: [0.6, 0.8]
+```
+
+---
+
+### euclideanDistance
+
+Calculates Euclidean distance between two vectors.
+
+**Location**: `apps/app/lib/vector-utils.ts`
+
+```typescript
+function euclideanDistance(vecA: number[], vecB: number[]): number
+```
+
+**Parameters**:
+- `vecA` (number[]): First vector
+- `vecB` (number[]): Second vector
+
+**Returns**: Distance (0 = identical, higher = more different)
+
+**Example**:
+```typescript
+const distance = euclideanDistance(vec1, vec2);
+console.log(`Distance: ${distance}`);
+```
+
+**Formula**:
+```
+distance = sqrt(Σ(ai - bi)²)
+```
+
+---
+
+## Authentication
+
+### getSession
+
+Retrieves the current session.
+
+**Location**: `apps/app/lib/auth/client.ts`
+
+```typescript
+async function getSession(): Promise<Session | null>
+```
+
+**Returns**: Promise resolving to the Session object or null
+
+**Example**:
+```typescript
+const session = await getSession();
+if (session) {
+  console.log(session.user.email);
+}
+```
+
+---
+
+### requireAuth
+
+Middleware to require authentication.
+
+**Location**: `apps/app/lib/auth/client.ts`
+
+```typescript
+async function requireAuth(): Promise<User>
+```
+
+**Returns**: Promise resolving to the User object
+
+**Throws**: Redirects to sign-in if not authenticated
+
+**Example**:
+```typescript
+export async function protectedAction() {
+  const user = await requireAuth();
+  // User is guaranteed to be authenticated here
+}
+```
+
+---
+
+## Validation
+
+### validateNoteContent
+
+Validates note content before creation.
+
+**Location**: `apps/app/lib/validation.ts`
+
+```typescript
+function validateNoteContent(content: string): {
+  valid: boolean;
+  error?: string;
+}
+```
+
+**Parameters**:
+- `content` (string): The note content to validate
+
+**Returns**: Validation result object
+
+**Rules**:
+- Minimum 10 characters
+- Maximum 100,000 characters
+- Must not be empty or only whitespace
+
+**Example**:
+```typescript
+const result = validateNoteContent(content);
+if (!result.valid) {
+  throw new Error(result.error);
+}
+```
+
+---
+
+## Date & Time
+
+### formatRelativeTime
+
+Formats a date as relative time (e.g., "2 hours ago").
+
+**Location**: `apps/app/lib/format-time.ts`
+
+```typescript
+function formatRelativeTime(date: Date): string
+```
+
+**Parameters**:
+- `date` (Date): The date to format
+
+**Returns**: Human-readable relative time string
+
+**Example**:
+```typescript
+const formatted = formatRelativeTime(note.createdAt);
+// Returns: "3 minutes ago" or "2 days ago"
+```
+
+---
+
+## Error Handling
+
+### AppError
+
+Custom error class for application errors.
+
+**Location**: `apps/app/lib/errors.ts`
+
+```typescript
+class AppError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public statusCode: number
+  )
+}
+```
+
+**Example**:
+```typescript
+throw new AppError(
+  "Note not found",
+  "NOTE_NOT_FOUND",
+  404
+);
+```
+
+**Common Error Codes**:
+- `UNAUTHORIZED`: User not authenticated (401)
+- `FORBIDDEN`: User lacks permissions (403)
+- `NOT_FOUND`: Resource not found (404)
+- `VALIDATION_ERROR`: Invalid input (400)
+- `RATE_LIMIT_EXCEEDED`: Too many requests (429)
+- `INTERNAL_ERROR`: Server error (500)
+
+---
+
+## Testing Utilities
+
+### createMockNote
+
+Creates a mock note for testing.
+
+**Location**: `apps/app/lib/test-utils.ts`
+
+```typescript
+function createMockNote(overrides?: Partial<Note>): Note
+```
+
+**Parameters**:
+- `overrides` (object, optional): Properties to override
+
+**Returns**: Mock Note object
+
+**Example**:
+```typescript
+const note = createMockNote({
+  content: "Test content",
+  status: "COMPLETED",
+});
+```
+
+---
+
+### mockEmbedding
+
+Generates a mock embedding vector for testing.
+
+**Location**: `apps/app/lib/test-utils.ts`
+
+```typescript
+function mockEmbedding(): number[]
+```
+
+**Returns**: Array of 1536 random numbers between -1 and 1
+
+**Example**:
+```typescript
+const embedding = mockEmbedding();
+// Use in tests without calling OpenAI API
+```

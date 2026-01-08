@@ -1,0 +1,108 @@
+---
+title: Note Creation
+description: Learn how to create and manage notes in RAG Chat
+---
+
+## Overview
+
+The note creation system allows users to input text content that will be processed, chunked, and embedded for later retrieval and chat interactions.
+
+## Creating a Note
+
+Notes are created through the AI Text Summarizer interface at `/ai-text-summarizer`.
+
+### User Flow
+
+1. Navigate to the AI Text Summarizer page
+2. Enter or paste text content into the textarea
+3. Submit the form to create a new note
+4. The system processes the note in the background
+5. Navigate to the note detail page to view progress and chat
+
+## Server Action
+
+The `createNote` action handles note creation:
+
+```typescript
+// apps/app/actions/create-note.ts
+export async function createNote(data: { content: string }) {
+  const user = await getUser();
+
+  const note = await prisma.note.create({
+    data: {
+      content: data.content,
+      userId: user.id,
+      status: "PENDING",
+    },
+  });
+
+  return note;
+}
+```
+
+### Database Schema
+
+Notes are stored with the following structure:
+
+```prisma
+model Note {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  status    ProcessingStatus @default(PENDING)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  chunks    NoteChunk[]
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+```
+
+## Note Processing
+
+After creation, notes go through a processing pipeline:
+
+1. **Text Chunking**: Content is split into overlapping chunks
+2. **Embedding Generation**: Each chunk gets a vector embedding
+3. **Storage**: Chunks and embeddings are stored in the database
+4. **Status Update**: Note status is updated to COMPLETED
+
+See [Text Processing](/docs/features/text-processing) for more details.
+
+## Components
+
+### SummarizerTextarea
+
+The main input component for note creation:
+
+```tsx
+// apps/app/app/(protected)/ai-text-summarizer/components/summarizer-textarea.tsx
+export function SummarizerTextarea() {
+  const [content, setContent] = useState("");
+
+  const handleSubmit = async () => {
+    const note = await createNote({ content });
+    router.push(`/ai-text-summarizer/${note.id}`);
+  };
+
+  return (
+    <textarea
+      value={content}
+      onChange={(e) => setContent(e.target.value)}
+      placeholder="Enter text to process..."
+    />
+  );
+}
+```
+
+## Best Practices
+
+- **Content Length**: For optimal processing, keep notes under 10,000 words
+- **Format**: Plain text works best; markdown is supported
+- **Language**: Currently optimized for English content
+- **Processing Time**: Larger documents may take several minutes to process

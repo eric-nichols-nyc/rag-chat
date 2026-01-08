@@ -1,0 +1,4 @@
+{
+  "title": "Features",
+  "pages": ["note-creation", "text-processing", "chat-interface", "authentication"]
+}

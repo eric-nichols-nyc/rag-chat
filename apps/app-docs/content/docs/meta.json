@@ -1,0 +1,4 @@
+{
+  "title": "RAG Chat Documentation",
+  "pages": ["index", "getting-started", "features", "architecture", "api-reference"]
+}

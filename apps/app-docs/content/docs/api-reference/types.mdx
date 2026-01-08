@@ -1,0 +1,453 @@
+---
+title: Types
+description: TypeScript type definitions
+---
+
+## Database Types
+
+### Note
+
+Represents a user's note in the system.
+
+```typescript
+type Note = {
+  id: string;
+  content: string;
+  status: ProcessingStatus;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+```
+
+**Properties**:
+- `id`: Unique identifier (CUID)
+- `content`: The text content of the note
+- `status`: Current processing status
+- `userId`: ID of the user who owns the note
+- `createdAt`: Timestamp of creation
+- `updatedAt`: Timestamp of last update
+
+---
+
+### NoteChunk
+
+Represents a chunk of a processed note.
+
+```typescript
+type NoteChunk = {
+  id: string;
+  noteId: string;
+  content: string;
+  position: number;
+};
+```
+
+**Properties**:
+- `id`: Unique identifier (CUID)
+- `noteId`: ID of the parent note
+- `content`: The text content of this chunk
+- `position`: Order position in the original note
+
+**Note**: The `embedding` field is excluded from TypeScript types due to Prisma's handling of the vector type.
+
+---
+
+### ProcessingStatus
+
+Enum representing the processing state of a note.
+
+```typescript
+enum ProcessingStatus {
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+}
+```
+
+**Values**:
+- `PENDING`: Note created but not yet processed
+- `PROCESSING`: Currently being chunked and embedded
+- `COMPLETED`: Successfully processed and ready for chat
+- `FAILED`: Processing encountered an error
+
+---
+
+### User
+
+Represents an authenticated user.
+
+```typescript
+type User = {
+  id: string;
+  email: string;
+  createdAt: Date;
+};
+```
+
+**Properties**:
+- `id`: Unique identifier
+- `email`: User's email address
+- `createdAt`: Account creation timestamp
+
+---
+
+## Chat Types
+
+### Message
+
+Represents a chat message.
+
+```typescript
+type Message = {
+  role: "user" | "assistant" | "system";
+  content: string;
+  timestamp?: Date;
+};
+```
+
+**Properties**:
+- `role`: The role of the message sender
+- `content`: The message content
+- `timestamp`: Optional message timestamp
+
+---
+
+### ChatResponse
+
+Response from a chat interaction.
+
+```typescript
+type ChatResponse = {
+  message: string;
+  sources?: RetrievedChunk[];
+  metadata?: {
+    model: string;
+    tokensUsed: number;
+    processingTime: number;
+  };
+};
+```
+
+**Properties**:
+- `message`: The AI-generated response
+- `sources`: Optional array of chunks used as context
+- `metadata`: Optional metadata about the response
+
+---
+
+### RetrievedChunk
+
+A chunk retrieved during RAG.
+
+```typescript
+type RetrievedChunk = {
+  content: string;
+  similarity: number;
+  noteId: string;
+  position: number;
+};
+```
+
+**Properties**:
+- `content`: The chunk content
+- `similarity`: Cosine similarity score (0-1)
+- `noteId`: ID of the source note
+- `position`: Position in the original note
+
+---
+
+## Utility Types
+
+### Vector
+
+Type alias for embedding vectors.
+
+```typescript
+type Vector = number[];
+```
+
+A 1536-dimensional array of numbers representing a text embedding.
+
+---
+
+### ChunkOptions
+
+Options for text chunking.
+
+```typescript
+type ChunkOptions = {
+  chunkSize?: number;
+  overlap?: number;
+  preserveWords?: boolean;
+};
+```
+
+**Properties**:
+- `chunkSize`: Target size in characters (default: 1000)
+- `overlap`: Overlap between chunks (default: 200)
+- `preserveWords`: Avoid splitting words (default: true)
+
+---
+
+### EmbeddingOptions
+
+Options for embedding generation.
+
+```typescript
+type EmbeddingOptions = {
+  model?: string;
+  dimensions?: number;
+  normalize?: boolean;
+};
+```
+
+**Properties**:
+- `model`: OpenAI model to use (default: "text-embedding-3-small")
+- `dimensions`: Target dimensions (default: 1536)
+- `normalize`: Normalize to unit length (default: false)
+
+---
+
+## API Response Types
+
+### ApiResponse
+
+Generic API response wrapper.
+
+```typescript
+type ApiResponse<T> = {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+  };
+};
+```
+
+**Example**:
+```typescript
+const response: ApiResponse<Note> = {
+  success: true,
+  data: note,
+};
+```
+
+---
+
+### PaginatedResponse
+
+Response with pagination metadata.
+
+```typescript
+type PaginatedResponse<T> = {
+  items: T[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+  };
+};
+```
+
+**Example**:
+```typescript
+const notes: PaginatedResponse<Note> = {
+  items: [...],
+  pagination: {
+    page: 1,
+    pageSize: 20,
+    totalItems: 100,
+    totalPages: 5,
+  },
+};
+```
+
+---
+
+## Form Types
+
+### CreateNoteInput
+
+Input for creating a new note.
+
+```typescript
+type CreateNoteInput = {
+  content: string;
+};
+```
+
+**Validation**:
+- `content`: Required, 10-100,000 characters
+
+---
+
+### ChatInput
+
+Input for chat interactions.
+
+```typescript
+type ChatInput = {
+  noteId: string;
+  message: string;
+  history?: Message[];
+};
+```
+
+**Properties**:
+- `noteId`: ID of the note to chat with
+- `message`: User's message
+- `history`: Optional conversation history
+
+---
+
+## Error Types
+
+### AppError
+
+Application error with metadata.
+
+```typescript
+class AppError extends Error {
+  code: string;
+  statusCode: number;
+  details?: unknown;
+
+  constructor(
+    message: string,
+    code: string,
+    statusCode: number,
+    details?: unknown
+  );
+}
+```
+
+**Example**:
+```typescript
+throw new AppError(
+  "Note not found",
+  "NOTE_NOT_FOUND",
+  404,
+  { noteId }
+);
+```
+
+---
+
+### ValidationError
+
+Input validation error.
+
+```typescript
+type ValidationError = {
+  field: string;
+  message: string;
+  value?: unknown;
+};
+```
+
+**Example**:
+```typescript
+const errors: ValidationError[] = [
+  {
+    field: "content",
+    message: "Content must be at least 10 characters",
+    value: "short",
+  },
+];
+```
+
+---
+
+## Component Props
+
+### NoteCardProps
+
+Props for the NoteCard component.
+
+```typescript
+type NoteCardProps = {
+  note: Note;
+  onDelete?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  className?: string;
+};
+```
+
+---
+
+### ProcessingStatusProps
+
+Props for the ProcessingStatus component.
+
+```typescript
+type ProcessingStatusProps = {
+  status: ProcessingStatus;
+  showLabel?: boolean;
+  size?: "sm" | "md" | "lg";
+};
+```
+
+---
+
+### ChatInterfaceProps
+
+Props for the ChatInterface component.
+
+```typescript
+type ChatInterfaceProps = {
+  noteId: string;
+  initialMessages?: Message[];
+  onMessageSent?: (message: Message) => void;
+  className?: string;
+};
+```
+
+---
+
+## Utility Type Helpers
+
+### Awaited
+
+TypeScript utility for unwrapping Promises.
+
+```typescript
+type NoteFromAction = Awaited<ReturnType<typeof createNote>>;
+```
+
+---
+
+### NonNullable
+
+Excludes null and undefined.
+
+```typescript
+type RequiredUser = NonNullable<User>;
+```
+
+---
+
+### Partial
+
+Makes all properties optional.
+
+```typescript
+type UpdateNoteInput = Partial<CreateNoteInput>;
+```
+
+---
+
+### Pick & Omit
+
+Select or exclude specific properties.
+
+```typescript
+// Only id and content
+type NotePreview = Pick<Note, "id" | "content">;
+
+// Everything except embedding
+type NoteChunkWithoutEmbedding = Omit<NoteChunk, "embedding">;
+```

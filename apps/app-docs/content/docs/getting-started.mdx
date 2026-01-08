@@ -1,0 +1,97 @@
+---
+title: Getting Started
+description: Set up your development environment for RAG Chat
+---
+
+## Prerequisites
+
+Before you begin, make sure you have the following installed:
+
+- Node.js 20 or higher
+- pnpm (recommended) or npm
+- PostgreSQL database (or Neon serverless Postgres)
+- Git
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd rag-chat
+```
+
+### 2. Install Dependencies
+
+From the monorepo root:
+
+```bash
+pnpm install
+```
+
+### 3. Set Up Environment Variables
+
+Create a `.env` file in `apps/app`:
+
+```bash
+# Database
+DATABASE_URL="postgresql://..."
+
+# Neon Auth
+NEON_AUTH_ISSUER_URL="https://..."
+NEON_AUTH_CLIENT_ID="..."
+NEON_AUTH_CLIENT_SECRET="..."
+
+# OpenAI (for embeddings and chat)
+OPENAI_API_KEY="sk-..."
+
+# Anthropic (for advanced chat)
+ANTHROPIC_API_KEY="sk-ant-..."
+```
+
+### 4. Set Up the Database
+
+Run Prisma migrations:
+
+```bash
+cd apps/app
+pnpm prisma migrate dev
+```
+
+### 5. Start the Development Server
+
+```bash
+pnpm dev
+```
+
+The application will be available at `http://localhost:3000`.
+
+## Project Structure
+
+```
+apps/app/
+├── app/                    # Next.js app directory
+│   ├── (protected)/       # Authenticated routes
+│   │   ├── ai-text-summarizer/
+│   │   └── account/
+│   ├── auth/              # Authentication pages
+│   ├── api/               # API routes
+│   └── page.tsx           # Home page
+├── actions/               # Server actions
+│   ├── create-note.ts
+│   ├── chat-with-note.ts
+│   ├── get-notes.ts
+│   └── process-note.ts
+├── lib/                   # Utility functions
+│   ├── auth/
+│   ├── chunk-text.ts
+│   ├── generate-embedding.ts
+│   └── vector-utils.ts
+└── components/            # React components
+```
+
+## Next Steps
+
+- Learn about [Features](/docs/features) to understand what you can build
+- Explore the [Architecture](/docs/architecture) to understand how it works
+- Check out the [API Reference](/docs/api-reference) for technical details

@@ -1,0 +1,185 @@
+---
+title: Text Processing
+description: Understanding the text processing and embedding pipeline
+---
+
+## Overview
+
+RAG Chat uses a sophisticated text processing pipeline to convert raw text into searchable, semantically meaningful chunks that can be used for AI-powered chat interactions.
+
+## Processing Pipeline
+
+The processing flow consists of several stages:
+
+### 1. Text Chunking
+
+Text is split into overlapping chunks using the `chunkText` utility:
+
+```typescript
+// apps/app/lib/chunk-text.ts
+export function chunkText(
+  text: string,
+  chunkSize: number = 1000,
+  overlap: number = 200
+): string[] {
+  const chunks: string[] = [];
+  let start = 0;
+
+  while (start < text.length) {
+    const end = Math.min(start + chunkSize, text.length);
+    chunks.push(text.slice(start, end));
+    start += chunkSize - overlap;
+  }
+
+  return chunks;
+}
+```
+
+**Parameters**:
+- `chunkSize`: Default 1000 characters per chunk
+- `overlap`: Default 200 characters overlap between chunks
+
+**Why Overlap?** Overlapping ensures that context isn't lost at chunk boundaries, improving retrieval quality.
+
+### 2. Embedding Generation
+
+Each chunk is converted to a vector embedding using OpenAI's embedding model:
+
+```typescript
+// apps/app/lib/generate-embedding.ts
+import { openai } from "@ai-sdk/openai";
+
+export async function generateEmbedding(text: string): Promise<number[]> {
+  const { embedding } = await embed({
+    model: openai.embedding("text-embedding-3-small"),
+    value: text,
+  });
+
+  return embedding;
+}
+```
+
+**Model**: `text-embedding-3-small` (1536 dimensions)
+
+### 3. Storage
+
+Chunks and embeddings are stored in the database:
+
+```prisma
+model NoteChunk {
+  id        String   @id @default(cuid())
+  noteId    String
+  content   String   @db.Text
+  embedding Unsupported("vector(1536)")?
+  position  Int
+  note      Note     @relation(fields: [noteId], references: [id])
+
+  @@index([noteId])
+}
+```
+
+## The processNote Action
+
+The main processing function orchestrates the entire pipeline:
+
+```typescript
+// apps/app/actions/process-note.ts
+export async function processNote(noteId: string) {
+  // 1. Get the note
+  const note = await prisma.note.findUnique({
+    where: { id: noteId },
+  });
+
+  if (!note) throw new Error("Note not found");
+
+  // 2. Update status to PROCESSING
+  await prisma.note.update({
+    where: { id: noteId },
+    data: { status: "PROCESSING" },
+  });
+
+  try {
+    // 3. Chunk the text
+    const chunks = chunkText(note.content);
+
+    // 4. Generate embeddings and save
+    for (let i = 0; i < chunks.length; i++) {
+      const embedding = await generateEmbedding(chunks[i]);
+
+      await prisma.$executeRaw`
+        INSERT INTO "NoteChunk" (id, "noteId", content, embedding, position)
+        VALUES (
+          ${cuid()},
+          ${noteId},
+          ${chunks[i]},
+          ${embedding}::vector,
+          ${i}
+        )
+      `;
+    }
+
+    // 5. Update status to COMPLETED
+    await prisma.note.update({
+      where: { id: noteId },
+      data: { status: "COMPLETED" },
+    });
+  } catch (error) {
+    // 6. Handle errors
+    await prisma.note.update({
+      where: { id: noteId },
+      data: { status: "FAILED" },
+    });
+    throw error;
+  }
+}
+```
+
+## Processing Status
+
+Users can track processing status in real-time:
+
+### Status States
+
+- `PENDING`: Note created, waiting to be processed
+- `PROCESSING`: Currently being chunked and embedded
+- `COMPLETED`: Ready for chat interactions
+- `FAILED`: Processing encountered an error
+
+### Status Component
+
+```tsx
+// apps/app/app/(protected)/ai-text-summarizer/[id]/components/processing-status.tsx
+export function ProcessingStatus({ status }: { status: ProcessingStatus }) {
+  const statusConfig = {
+    PENDING: { label: "Waiting to process...", icon: Clock },
+    PROCESSING: { label: "Processing...", icon: Loader2 },
+    COMPLETED: { label: "Ready!", icon: CheckCircle },
+    FAILED: { label: "Failed", icon: XCircle },
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <div className="flex items-center gap-2">
+      <config.icon className={status === "PROCESSING" ? "animate-spin" : ""} />
+      <span>{config.label}</span>
+    </div>
+  );
+}
+```
+
+## Performance Considerations
+
+- **Batch Processing**: Process multiple chunks in parallel when possible
+- **Rate Limiting**: OpenAI API has rate limits; implement backoff strategies
+- **Chunk Size**: Balance between context (larger) and precision (smaller)
+- **Cost**: Embedding generation has a cost per token; optimize chunk sizes
+
+## Error Handling
+
+Common errors and solutions:
+
+- **API Rate Limits**: Implement exponential backoff
+- **Invalid Text**: Sanitize and validate input before processing
+- **Database Errors**: Use transactions for atomic operations
+- **Timeout**: Set appropriate timeouts for long-running operations

@@ -1,0 +1,226 @@
+---
+title: Authentication
+description: User authentication with Neon Auth
+---
+
+## Overview
+
+RAG Chat uses [Neon Auth](https://neon.tech/docs/guides/neon-authorize) for secure user authentication and session management.
+
+## Authentication Flow
+
+### Sign In
+
+1. User navigates to `/auth/sign-in`
+2. Enters email address
+3. Receives magic link or verification code
+4. Completes authentication
+5. Redirected to dashboard
+
+### Protected Routes
+
+Routes under `(protected)` require authentication:
+
+```tsx
+// apps/app/app/(protected)/layout.tsx
+import { getUser } from "@/lib/auth/client";
+import { redirect } from "next/navigation";
+
+export default async function ProtectedLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const user = await getUser();
+
+  if (!user) {
+    redirect("/auth/sign-in");
+  }
+
+  return <>{children}</>;
+}
+```
+
+## Authentication Client
+
+### Setup
+
+```typescript
+// apps/app/lib/auth/client.ts
+import { createAuthClient } from "@neondatabase/neon-auth-next";
+
+export const authClient = createAuthClient({
+  issuerUrl: process.env.NEON_AUTH_ISSUER_URL!,
+  clientId: process.env.NEON_AUTH_CLIENT_ID!,
+  clientSecret: process.env.NEON_AUTH_CLIENT_SECRET!,
+});
+
+export async function getUser() {
+  const session = await authClient.getSession();
+  return session?.user;
+}
+```
+
+### Environment Variables
+
+Required environment variables:
+
+```bash
+NEON_AUTH_ISSUER_URL="https://auth.neon.tech"
+NEON_AUTH_CLIENT_ID="your_client_id"
+NEON_AUTH_CLIENT_SECRET="your_client_secret"
+```
+
+## API Routes
+
+### Authentication Endpoints
+
+```typescript
+// apps/app/app/api/auth/[...path]/route.ts
+import { authClient } from "@/lib/auth/client";
+
+export const { GET, POST } = authClient.handlers;
+```
+
+This creates the following endpoints:
+- `/api/auth/sign-in`
+- `/api/auth/sign-out`
+- `/api/auth/callback`
+- `/api/auth/session`
+
+## Server Actions
+
+### Protecting Server Actions
+
+Use the `getUser` helper to protect server actions:
+
+```typescript
+import { getUser } from "@/lib/auth/client";
+
+export async function createNote(content: string) {
+  const user = await getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  const note = await prisma.note.create({
+    data: {
+      content,
+      userId: user.id,
+    },
+  });
+
+  return note;
+}
+```
+
+## Client-Side Authentication
+
+### useUser Hook
+
+Check authentication status in client components:
+
+```tsx
+"use client";
+
+import { useSession } from "@neondatabase/neon-auth-next/client";
+
+export function UserProfile() {
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (!session) {
+    return <div>Please sign in</div>;
+  }
+
+  return <div>Welcome, {session.user.email}</div>;
+}
+```
+
+## Session Management
+
+### Session Storage
+
+Sessions are stored using secure HTTP-only cookies with the following properties:
+
+- **HttpOnly**: Prevents JavaScript access
+- **Secure**: Only transmitted over HTTPS
+- **SameSite**: CSRF protection
+- **Max-Age**: Configurable expiration
+
+### Session Refresh
+
+Sessions are automatically refreshed when they approach expiration:
+
+```typescript
+const session = await authClient.getSession();
+
+if (session.isExpiringSoon) {
+  await authClient.refreshSession();
+}
+```
+
+## Row-Level Security
+
+Neon Auth integrates with PostgreSQL's Row-Level Security (RLS):
+
+```sql
+-- Enable RLS on the Note table
+ALTER TABLE "Note" ENABLE ROW LEVEL SECURITY;
+
+-- Users can only see their own notes
+CREATE POLICY user_notes_policy ON "Note"
+  FOR ALL
+  USING (auth.user_id() = "userId");
+```
+
+## Sign Out
+
+### Server Action
+
+```typescript
+import { authClient } from "@/lib/auth/client";
+import { redirect } from "next/navigation";
+
+export async function signOut() {
+  await authClient.signOut();
+  redirect("/auth/sign-in");
+}
+```
+
+### Client Component
+
+```tsx
+"use client";
+
+import { signOut } from "@/actions/sign-out";
+
+export function SignOutButton() {
+  return (
+    <button onClick={() => signOut()}>
+      Sign Out
+    </button>
+  );
+}
+```
+
+## Account Management
+
+Users can manage their account at `/account/*`:
+
+- `/account/profile` - View and edit profile
+- `/account/security` - Security settings
+- `/account/sessions` - Active sessions
+
+## Best Practices
+
+- **Never expose secrets**: Keep auth credentials in environment variables
+- **Use server actions**: Validate authentication on the server
+- **Implement RLS**: Use row-level security for data isolation
+- **Handle errors**: Gracefully handle authentication failures
+- **Refresh tokens**: Implement token refresh for long sessions
+- **Audit logs**: Log authentication events for security

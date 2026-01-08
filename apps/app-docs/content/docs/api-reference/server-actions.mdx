@@ -1,0 +1,269 @@
+---
+title: Server Actions
+description: API reference for server actions
+---
+
+## Overview
+
+Server actions provide the main API interface for interacting with the RAG Chat application. All actions are server-side functions that handle authentication, validation, and business logic.
+
+## Note Actions
+
+### createNote
+
+Creates a new note for the authenticated user.
+
+**Location**: `apps/app/actions/create-note.ts`
+
+```typescript
+async function createNote(data: {
+  content: string;
+}): Promise<Note>
+```
+
+**Parameters**:
+- `data.content` (string): The text content of the note
+
+**Returns**: Promise resolving to the created Note object
+
+**Example**:
+```typescript
+const note = await createNote({
+  content: "This is my note content..."
+});
+// Returns: { id: "...", content: "...", status: "PENDING", ... }
+```
+
+**Errors**:
+- Throws if user is not authenticated
+- Throws if content is empty or invalid
+
+---
+
+### getNote
+
+Retrieves a single note by ID for the authenticated user.
+
+**Location**: `apps/app/actions/get-note.ts`
+
+```typescript
+async function getNote(noteId: string): Promise<Note | null>
+```
+
+**Parameters**:
+- `noteId` (string): The unique identifier of the note
+
+**Returns**: Promise resolving to the Note object or null if not found
+
+**Example**:
+```typescript
+const note = await getNote("clx123abc");
+if (note) {
+  console.log(note.content);
+}
+```
+
+---
+
+### getNotes
+
+Retrieves all notes for the authenticated user.
+
+**Location**: `apps/app/actions/get-notes.ts`
+
+```typescript
+async function getNotes(): Promise<Note[]>
+```
+
+**Returns**: Promise resolving to an array of Note objects
+
+**Example**:
+```typescript
+const notes = await getNotes();
+console.log(`You have ${notes.length} notes`);
+```
+
+---
+
+### processNote
+
+Processes a note by chunking the text and generating embeddings.
+
+**Location**: `apps/app/actions/process-note.ts`
+
+```typescript
+async function processNote(noteId: string): Promise<void>
+```
+
+**Parameters**:
+- `noteId` (string): The unique identifier of the note to process
+
+**Side Effects**:
+- Updates note status to PROCESSING
+- Creates NoteChunk records
+- Generates embeddings for each chunk
+- Updates note status to COMPLETED or FAILED
+
+**Example**:
+```typescript
+await processNote("clx123abc");
+// Note is now processed and ready for chat
+```
+
+**Errors**:
+- Throws if note is not found
+- Throws if user doesn't own the note
+- Updates status to FAILED on processing errors
+
+---
+
+### getNoteChunks
+
+Retrieves all chunks for a specific note (without embeddings).
+
+**Location**: `apps/app/actions/get-note-chunks.ts`
+
+```typescript
+async function getNoteChunks(noteId: string): Promise<NoteChunk[]>
+```
+
+**Parameters**:
+- `noteId` (string): The unique identifier of the note
+
+**Returns**: Promise resolving to an array of NoteChunk objects
+
+**Note**: Embeddings are excluded from the response due to Prisma's unsupported vector type.
+
+**Example**:
+```typescript
+const chunks = await getNoteChunks("clx123abc");
+console.log(`Note has ${chunks.length} chunks`);
+```
+
+---
+
+## Chat Actions
+
+### chatWithNote
+
+Performs a RAG-based chat interaction with a note.
+
+**Location**: `apps/app/actions/chat-with-note.ts`
+
+```typescript
+async function chatWithNote(
+  noteId: string,
+  message: string
+): Promise<string>
+```
+
+**Parameters**:
+- `noteId` (string): The unique identifier of the note
+- `message` (string): The user's question or message
+
+**Returns**: Promise resolving to the AI-generated response
+
+**Process**:
+1. Generates embedding for the user's message
+2. Performs vector similarity search
+3. Retrieves top 5 relevant chunks
+4. Constructs context from chunks
+5. Generates response using LLM
+
+**Example**:
+```typescript
+const response = await chatWithNote(
+  "clx123abc",
+  "What are the main topics in this note?"
+);
+console.log(response);
+```
+
+**Errors**:
+- Throws if note is not found or not owned by user
+- Throws if note status is not COMPLETED
+- Throws on API failures (embedding or LLM generation)
+
+---
+
+## Authentication Actions
+
+### getUser
+
+Retrieves the currently authenticated user.
+
+**Location**: `apps/app/lib/auth/client.ts`
+
+```typescript
+async function getUser(): Promise<User | null>
+```
+
+**Returns**: Promise resolving to the User object or null if not authenticated
+
+**Example**:
+```typescript
+const user = await getUser();
+if (!user) {
+  redirect("/auth/sign-in");
+}
+```
+
+---
+
+### signOut
+
+Signs out the current user.
+
+```typescript
+async function signOut(): Promise<void>
+```
+
+**Side Effects**:
+- Clears session cookies
+- Redirects to sign-in page
+
+**Example**:
+```typescript
+await signOut();
+// User is now signed out
+```
+
+---
+
+## Rate Limiting
+
+All server actions are subject to rate limiting:
+
+- **Note Creation**: 10 notes per minute
+- **Chat Interactions**: 20 messages per minute
+- **Processing**: 5 concurrent processes per user
+
+Exceeding limits returns a 429 error with retry-after header.
+
+## Error Handling
+
+All actions follow a consistent error handling pattern:
+
+```typescript
+try {
+  const result = await someAction(params);
+  return result;
+} catch (error) {
+  if (error instanceof UnauthorizedError) {
+    // Handle authentication errors
+  } else if (error instanceof ValidationError) {
+    // Handle validation errors
+  } else {
+    // Handle unexpected errors
+  }
+  throw error;
+}
+```
+
+## Best Practices
+
+1. **Always authenticate**: Check user authentication before performing actions
+2. **Validate inputs**: Sanitize and validate all user inputs
+3. **Handle errors**: Use try-catch blocks and provide meaningful error messages
+4. **Use TypeScript**: Leverage type safety for parameters and return values
+5. **Test thoroughly**: Write tests for all server actions

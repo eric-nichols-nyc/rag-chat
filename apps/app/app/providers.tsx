@@ -10,7 +10,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <NeonAuthUIProvider
-      authClient={authClient}
+      // biome-ignore lint/suspicious/noExplicitAny: Type mismatch due to @better-fetch/fetch version conflict between 1.1.18 and 1.1.21
+      authClient={authClient as any}
       emailOTP
       Link={Link}
       navigate={router.push}

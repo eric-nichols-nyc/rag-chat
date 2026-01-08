@@ -1,3 +1,6 @@
+import { Button } from "@repo/design-system/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getNote } from "@/actions/get-note";
 import { processNote } from "@/actions/process-note";
@@ -46,12 +49,20 @@ export default async function TextSummaryPage({
   return (
     <PollingWrapper isProcessing={!isProcessingComplete} noteId={id}>
       <div className="space-y-6 p-4">
-        <div>
-          <h1 className="mb-2 font-bold text-2xl">{note.title}</h1>
-          <p className="text-muted-foreground text-sm">
-            Created:{" "}
-            {new Date(note.created_at || Date.now()).toLocaleDateString()}
-          </p>
+        <div className="flex items-center gap-4">
+          <Button asChild size="icon" variant="ghost">
+            <Link href="/ai-text-summarizer">
+              <ArrowLeft className="size-4" />
+              <span className="sr-only">Back</span>
+            </Link>
+          </Button>
+          <div className="flex-1">
+            <h1 className="mb-2 font-bold text-2xl">{note.title}</h1>
+            <p className="text-muted-foreground text-sm">
+              Created:{" "}
+              {new Date(note.created_at || Date.now()).toLocaleDateString()}
+            </p>
+          </div>
         </div>
 
         <ProcessingStatus
@@ -61,8 +72,8 @@ export default async function TextSummaryPage({
           isProcessing={!isProcessingComplete}
         />
 
-        <div className="space-y-4">
-          <div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="lg:col-span-1">
             <h2 className="mb-2 font-semibold text-lg">Original Text</h2>
             <div className="rounded-lg border bg-card p-4">
               <p className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -72,7 +83,7 @@ export default async function TextSummaryPage({
           </div>
 
           {note.summary ? (
-            <div>
+            <div className="lg:col-span-1">
               <h2 className="mb-2 font-semibold text-lg">Summary</h2>
               <div className="rounded-lg border bg-card p-4">
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -80,12 +91,16 @@ export default async function TextSummaryPage({
                 </p>
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div className="lg:col-span-1" />
+          )}
 
-          <NoteChatbot
-            isProcessingComplete={isProcessingComplete}
-            noteId={id}
-          />
+          <div className="lg:col-span-1">
+            <NoteChatbot
+              isProcessingComplete={isProcessingComplete}
+              noteId={id}
+            />
+          </div>
         </div>
       </div>
     </PollingWrapper>

@@ -74,7 +74,7 @@ export default async function AiTextSummarizerPage() {
         )}
 
         {!error && notes.length > 0 && (
-          <div className="grid gap-4">
+          <div className="flex gap-2">
             {notes.map((note) => {
               const isProcessed = !!note.summary;
               const createdAt = note.created_at
@@ -83,7 +83,7 @@ export default async function AiTextSummarizerPage() {
 
               return (
                 <Link
-                  className="block"
+                  className="flex"
                   href={`/ai-text-summarizer/${note.id}`}
                   key={note.id}
                 >

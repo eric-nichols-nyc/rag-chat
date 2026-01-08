@@ -1,21 +1,7 @@
-import { Badge } from "@repo/design-system/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@repo/design-system/components/ui/carousel";
-import { CheckCircle, Clock, FileText, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Card, CardContent } from "@repo/design-system/components/ui/card";
+import { FileText } from "lucide-react";
 import { getNotes } from "@/actions/get-notes";
+import { NotesCarousel } from "./components/notes-carousel";
 import { SummarizerTextarea } from "./components/summarizer-textarea";
 
 export default async function AiTextSummarizerPage() {
@@ -80,64 +66,7 @@ export default async function AiTextSummarizerPage() {
           </Card>
         )}
 
-        {!error && notes.length > 0 && (
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-2 md:-ml-4">
-              {notes.map((note) => {
-                const isProcessed = !!note.summary;
-                const createdAt = note.created_at
-                  ? new Date(note.created_at).toLocaleDateString()
-                  : "Unknown date";
-
-                return (
-                  <CarouselItem
-                    className="pl-2 md:basis-1/2 md:pl-4 lg:basis-1/3"
-                    key={note.id}
-                  >
-                    <Link href={`/ai-text-summarizer/${note.id}`}>
-                      <Card className="border-2 border-border transition-colors hover:bg-muted/50">
-                        <CardHeader className="pb-2">
-                          <div className="flex items-start justify-between gap-4">
-                            <CardTitle className="line-clamp-1 text-base">
-                              {note.title}
-                            </CardTitle>
-                            <Badge
-                              className="shrink-0"
-                              variant={isProcessed ? "default" : "secondary"}
-                            >
-                              {isProcessed ? (
-                                <>
-                                  <CheckCircle className="mr-1 size-3" />
-                                  Processed
-                                </>
-                              ) : (
-                                <>
-                                  <Loader2 className="mr-1 size-3 animate-spin" />
-                                  Processing
-                                </>
-                              )}
-                            </Badge>
-                          </div>
-                          <CardDescription className="flex items-center gap-2">
-                            <Clock className="size-3" />
-                            {createdAt}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="line-clamp-2 text-muted-foreground text-sm">
-                            {note.summary || `${note.content.slice(0, 200)}...`}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  </CarouselItem>
-                );
-              })}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
-        )}
+        {!error && <NotesCarousel notes={notes} />}
       </div>
     </div>
   );

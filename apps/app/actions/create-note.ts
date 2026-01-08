@@ -51,6 +51,15 @@ export async function createNote(input: { text: string; title?: string }) {
 
     const { user } = await neonAuth();
 
+    // User should already be synced via the protected layout
+    // But we'll ensure they exist here as a safety check
+    if (!user) {
+      return {
+        success: false as const,
+        error: "You must be logged in to create a note",
+      };
+    }
+
     // Generate title from text if not provided
     const title =
       validatedInput.title?.trim() || generateTitle(validatedInput.text);

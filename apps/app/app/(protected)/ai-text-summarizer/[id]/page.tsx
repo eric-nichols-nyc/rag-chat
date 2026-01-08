@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { getNote } from "@/actions/get-note";
 import { processNote } from "@/actions/process-note";
 import { NoteChatbot } from "./components/note-chatbot";
+import { NoteOriginalText } from "./components/note-original-text";
+import { NoteSummary } from "./components/note-summary";
 import { PollingWrapper } from "./components/polling-wrapper";
 import { ProcessingStatus } from "./components/processing-status";
 
@@ -73,27 +75,9 @@ export default async function TextSummaryPage({
         />
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div className="lg:col-span-1">
-            <h2 className="mb-2 font-semibold text-lg">Original Text</h2>
-            <div className="rounded-lg border bg-card p-4">
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                {note.content}
-              </p>
-            </div>
-          </div>
+          <NoteOriginalText content={note.content} />
 
-          {note.summary ? (
-            <div className="lg:col-span-1">
-              <h2 className="mb-2 font-semibold text-lg">Summary</h2>
-              <div className="rounded-lg border bg-card p-4">
-                <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                  {note.summary}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="lg:col-span-1" />
-          )}
+          <NoteSummary summary={note.summary} />
 
           <div className="lg:col-span-1">
             <NoteChatbot

@@ -35,6 +35,8 @@ export async function getNoteChunks(input: { note_id: string }) {
     }
 
     // Fetch chunks ordered by chunk_index
+    // Note: embedding is not included in select because it's Unsupported("vector") type
+    // and Prisma doesn't support it in select statements
     const chunks = await database.note_chunks.findMany({
       where: { note_id: validatedInput.note_id },
       orderBy: { chunk_index: "asc" },
@@ -42,7 +44,6 @@ export async function getNoteChunks(input: { note_id: string }) {
         id: true,
         content: true,
         chunk_index: true,
-        embedding: true,
         created_at: true,
       },
     });

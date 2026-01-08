@@ -64,6 +64,7 @@ export async function createNote(input: { text: string; title?: string }) {
         content: validatedInput.text,
         user_id: user?.id || null,
         source_type: "text",
+        tags: ["text"], // Tag text notes for easy filtering
         summary: null, // Will be populated later
       },
     });

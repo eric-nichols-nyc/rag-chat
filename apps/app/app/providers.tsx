@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  NeonAuthUIProvider,
-  UserButton,
-} from "@neondatabase/neon-js/auth/react/ui";
-import { ModeToggle } from "@repo/design-system/components/mode-toggle";
-import { useRouter } from "next/navigation";
+import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react/ui";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth/client";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -15,19 +11,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NeonAuthUIProvider
       authClient={authClient}
-      navigate={router.push}
-      replace={router.replace}
-      onSessionChange={() => router.refresh()}
-      Link={Link}
       emailOTP
+      Link={Link}
+      navigate={router.push}
+      onSessionChange={() => router.refresh()}
       redirectTo="/account/settings"
+      replace={router.replace}
     >
-      <header className="flex h-16 items-center justify-end gap-4 p-4">
-        <ModeToggle />
-        <UserButton size="icon" />
-      </header>
       {children}
     </NeonAuthUIProvider>
   );
 }
-

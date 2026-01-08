@@ -16,7 +16,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       Link={Link}
       navigate={router.push}
       onSessionChange={() => router.refresh()}
-      redirectTo="/account/settings"
+      redirectTo="/ai-text-summarizer"
       replace={router.replace}
     >
       {children}

@@ -18,6 +18,12 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model users
+ * This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+ * Users table - references Neon Auth user IDs
+ */
+export type users = Prisma.usersModel
+/**
  * Model flash_card_reviews
  * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
  * This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

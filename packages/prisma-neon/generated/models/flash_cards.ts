@@ -418,10 +418,6 @@ export type flash_cardsSumOrderByAggregateInput = {
   order_index?: Prisma.SortOrder
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }

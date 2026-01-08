@@ -8,6 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/users'
 export type * from './models/flash_card_reviews'
 export type * from './models/flash_card_sessions'
 export type * from './models/flash_cards'

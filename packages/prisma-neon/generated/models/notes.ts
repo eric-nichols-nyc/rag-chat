@@ -226,6 +226,8 @@ export type notesWhereInput = {
   source_type?: Prisma.StringNullableFilter<"notes"> | string | null
   file_url?: Prisma.StringNullableFilter<"notes"> | string | null
   user_id?: Prisma.UuidNullableFilter<"notes"> | string | null
+  user?: Prisma.XOR<Prisma.UsersNullableScalarRelationFilter, Prisma.usersWhereInput> | null
+  chunks?: Prisma.Note_chunksListRelationFilter
 }
 
 export type notesOrderByWithRelationInput = {
@@ -240,6 +242,8 @@ export type notesOrderByWithRelationInput = {
   source_type?: Prisma.SortOrderInput | Prisma.SortOrder
   file_url?: Prisma.SortOrderInput | Prisma.SortOrder
   user_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  user?: Prisma.usersOrderByWithRelationInput
+  chunks?: Prisma.note_chunksOrderByRelationAggregateInput
 }
 
 export type notesWhereUniqueInput = Prisma.AtLeast<{
@@ -257,6 +261,8 @@ export type notesWhereUniqueInput = Prisma.AtLeast<{
   source_type?: Prisma.StringNullableFilter<"notes"> | string | null
   file_url?: Prisma.StringNullableFilter<"notes"> | string | null
   user_id?: Prisma.UuidNullableFilter<"notes"> | string | null
+  user?: Prisma.XOR<Prisma.UsersNullableScalarRelationFilter, Prisma.usersWhereInput> | null
+  chunks?: Prisma.Note_chunksListRelationFilter
 }, "id">
 
 export type notesOrderByWithAggregationInput = {
@@ -304,7 +310,8 @@ export type notesCreateInput = {
   updated_at?: Date | string | null
   source_type?: string | null
   file_url?: string | null
-  user_id?: string | null
+  user?: Prisma.usersCreateNestedOneWithoutNotesInput
+  chunks?: Prisma.note_chunksCreateNestedManyWithoutNoteInput
 }
 
 export type notesUncheckedCreateInput = {
@@ -319,6 +326,7 @@ export type notesUncheckedCreateInput = {
   source_type?: string | null
   file_url?: string | null
   user_id?: string | null
+  chunks?: Prisma.note_chunksUncheckedCreateNestedManyWithoutNoteInput
 }
 
 export type notesUpdateInput = {
@@ -332,7 +340,8 @@ export type notesUpdateInput = {
   updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  user?: Prisma.usersUpdateOneWithoutNotesNestedInput
+  chunks?: Prisma.note_chunksUpdateManyWithoutNoteNestedInput
 }
 
 export type notesUncheckedUpdateInput = {
@@ -347,6 +356,7 @@ export type notesUncheckedUpdateInput = {
   source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chunks?: Prisma.note_chunksUncheckedUpdateManyWithoutNoteNestedInput
 }
 
 export type notesCreateManyInput = {
@@ -374,7 +384,6 @@ export type notesUpdateManyMutationInput = {
   updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type notesUncheckedUpdateManyInput = {
@@ -389,6 +398,21 @@ export type notesUncheckedUpdateManyInput = {
   source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type NotesListRelationFilter = {
+  every?: Prisma.notesWhereInput
+  some?: Prisma.notesWhereInput
+  none?: Prisma.notesWhereInput
+}
+
+export type notesOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type NotesScalarRelationFilter = {
+  is?: Prisma.notesWhereInput
+  isNot?: Prisma.notesWhereInput
 }
 
 export type StringNullableListFilter<$PrismaModel = never> = {
@@ -439,6 +463,62 @@ export type notesMinOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
 }
 
+export type notesCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.notesCreateWithoutUserInput, Prisma.notesUncheckedCreateWithoutUserInput> | Prisma.notesCreateWithoutUserInput[] | Prisma.notesUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.notesCreateOrConnectWithoutUserInput | Prisma.notesCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.notesCreateManyUserInputEnvelope
+  connect?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+}
+
+export type notesUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.notesCreateWithoutUserInput, Prisma.notesUncheckedCreateWithoutUserInput> | Prisma.notesCreateWithoutUserInput[] | Prisma.notesUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.notesCreateOrConnectWithoutUserInput | Prisma.notesCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.notesCreateManyUserInputEnvelope
+  connect?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+}
+
+export type notesUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.notesCreateWithoutUserInput, Prisma.notesUncheckedCreateWithoutUserInput> | Prisma.notesCreateWithoutUserInput[] | Prisma.notesUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.notesCreateOrConnectWithoutUserInput | Prisma.notesCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.notesUpsertWithWhereUniqueWithoutUserInput | Prisma.notesUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.notesCreateManyUserInputEnvelope
+  set?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+  disconnect?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+  delete?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+  connect?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+  update?: Prisma.notesUpdateWithWhereUniqueWithoutUserInput | Prisma.notesUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.notesUpdateManyWithWhereWithoutUserInput | Prisma.notesUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.notesScalarWhereInput | Prisma.notesScalarWhereInput[]
+}
+
+export type notesUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.notesCreateWithoutUserInput, Prisma.notesUncheckedCreateWithoutUserInput> | Prisma.notesCreateWithoutUserInput[] | Prisma.notesUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.notesCreateOrConnectWithoutUserInput | Prisma.notesCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.notesUpsertWithWhereUniqueWithoutUserInput | Prisma.notesUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.notesCreateManyUserInputEnvelope
+  set?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+  disconnect?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+  delete?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+  connect?: Prisma.notesWhereUniqueInput | Prisma.notesWhereUniqueInput[]
+  update?: Prisma.notesUpdateWithWhereUniqueWithoutUserInput | Prisma.notesUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.notesUpdateManyWithWhereWithoutUserInput | Prisma.notesUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.notesScalarWhereInput | Prisma.notesScalarWhereInput[]
+}
+
+export type notesCreateNestedOneWithoutChunksInput = {
+  create?: Prisma.XOR<Prisma.notesCreateWithoutChunksInput, Prisma.notesUncheckedCreateWithoutChunksInput>
+  connectOrCreate?: Prisma.notesCreateOrConnectWithoutChunksInput
+  connect?: Prisma.notesWhereUniqueInput
+}
+
+export type notesUpdateOneRequiredWithoutChunksNestedInput = {
+  create?: Prisma.XOR<Prisma.notesCreateWithoutChunksInput, Prisma.notesUncheckedCreateWithoutChunksInput>
+  connectOrCreate?: Prisma.notesCreateOrConnectWithoutChunksInput
+  upsert?: Prisma.notesUpsertWithoutChunksInput
+  connect?: Prisma.notesWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.notesUpdateToOneWithWhereWithoutChunksInput, Prisma.notesUpdateWithoutChunksInput>, Prisma.notesUncheckedUpdateWithoutChunksInput>
+}
+
 export type notesCreatetagsInput = {
   set: string[]
 }
@@ -448,6 +528,232 @@ export type notesUpdatetagsInput = {
   push?: string | string[]
 }
 
+export type notesCreateWithoutUserInput = {
+  id?: string
+  title: string
+  content: string
+  tags?: Prisma.notesCreatetagsInput | string[]
+  source_id?: string | null
+  summary?: string | null
+  created_at?: Date | string | null
+  updated_at?: Date | string | null
+  source_type?: string | null
+  file_url?: string | null
+  chunks?: Prisma.note_chunksCreateNestedManyWithoutNoteInput
+}
+
+export type notesUncheckedCreateWithoutUserInput = {
+  id?: string
+  title: string
+  content: string
+  tags?: Prisma.notesCreatetagsInput | string[]
+  source_id?: string | null
+  summary?: string | null
+  created_at?: Date | string | null
+  updated_at?: Date | string | null
+  source_type?: string | null
+  file_url?: string | null
+  chunks?: Prisma.note_chunksUncheckedCreateNestedManyWithoutNoteInput
+}
+
+export type notesCreateOrConnectWithoutUserInput = {
+  where: Prisma.notesWhereUniqueInput
+  create: Prisma.XOR<Prisma.notesCreateWithoutUserInput, Prisma.notesUncheckedCreateWithoutUserInput>
+}
+
+export type notesCreateManyUserInputEnvelope = {
+  data: Prisma.notesCreateManyUserInput | Prisma.notesCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type notesUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.notesWhereUniqueInput
+  update: Prisma.XOR<Prisma.notesUpdateWithoutUserInput, Prisma.notesUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.notesCreateWithoutUserInput, Prisma.notesUncheckedCreateWithoutUserInput>
+}
+
+export type notesUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.notesWhereUniqueInput
+  data: Prisma.XOR<Prisma.notesUpdateWithoutUserInput, Prisma.notesUncheckedUpdateWithoutUserInput>
+}
+
+export type notesUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.notesScalarWhereInput
+  data: Prisma.XOR<Prisma.notesUpdateManyMutationInput, Prisma.notesUncheckedUpdateManyWithoutUserInput>
+}
+
+export type notesScalarWhereInput = {
+  AND?: Prisma.notesScalarWhereInput | Prisma.notesScalarWhereInput[]
+  OR?: Prisma.notesScalarWhereInput[]
+  NOT?: Prisma.notesScalarWhereInput | Prisma.notesScalarWhereInput[]
+  id?: Prisma.UuidFilter<"notes"> | string
+  title?: Prisma.StringFilter<"notes"> | string
+  content?: Prisma.StringFilter<"notes"> | string
+  tags?: Prisma.StringNullableListFilter<"notes">
+  source_id?: Prisma.StringNullableFilter<"notes"> | string | null
+  summary?: Prisma.StringNullableFilter<"notes"> | string | null
+  created_at?: Prisma.DateTimeNullableFilter<"notes"> | Date | string | null
+  updated_at?: Prisma.DateTimeNullableFilter<"notes"> | Date | string | null
+  source_type?: Prisma.StringNullableFilter<"notes"> | string | null
+  file_url?: Prisma.StringNullableFilter<"notes"> | string | null
+  user_id?: Prisma.UuidNullableFilter<"notes"> | string | null
+}
+
+export type notesCreateWithoutChunksInput = {
+  id?: string
+  title: string
+  content: string
+  tags?: Prisma.notesCreatetagsInput | string[]
+  source_id?: string | null
+  summary?: string | null
+  created_at?: Date | string | null
+  updated_at?: Date | string | null
+  source_type?: string | null
+  file_url?: string | null
+  user?: Prisma.usersCreateNestedOneWithoutNotesInput
+}
+
+export type notesUncheckedCreateWithoutChunksInput = {
+  id?: string
+  title: string
+  content: string
+  tags?: Prisma.notesCreatetagsInput | string[]
+  source_id?: string | null
+  summary?: string | null
+  created_at?: Date | string | null
+  updated_at?: Date | string | null
+  source_type?: string | null
+  file_url?: string | null
+  user_id?: string | null
+}
+
+export type notesCreateOrConnectWithoutChunksInput = {
+  where: Prisma.notesWhereUniqueInput
+  create: Prisma.XOR<Prisma.notesCreateWithoutChunksInput, Prisma.notesUncheckedCreateWithoutChunksInput>
+}
+
+export type notesUpsertWithoutChunksInput = {
+  update: Prisma.XOR<Prisma.notesUpdateWithoutChunksInput, Prisma.notesUncheckedUpdateWithoutChunksInput>
+  create: Prisma.XOR<Prisma.notesCreateWithoutChunksInput, Prisma.notesUncheckedCreateWithoutChunksInput>
+  where?: Prisma.notesWhereInput
+}
+
+export type notesUpdateToOneWithWhereWithoutChunksInput = {
+  where?: Prisma.notesWhereInput
+  data: Prisma.XOR<Prisma.notesUpdateWithoutChunksInput, Prisma.notesUncheckedUpdateWithoutChunksInput>
+}
+
+export type notesUpdateWithoutChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.notesUpdatetagsInput | string[]
+  source_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  user?: Prisma.usersUpdateOneWithoutNotesNestedInput
+}
+
+export type notesUncheckedUpdateWithoutChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.notesUpdatetagsInput | string[]
+  source_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type notesCreateManyUserInput = {
+  id?: string
+  title: string
+  content: string
+  tags?: Prisma.notesCreatetagsInput | string[]
+  source_id?: string | null
+  summary?: string | null
+  created_at?: Date | string | null
+  updated_at?: Date | string | null
+  source_type?: string | null
+  file_url?: string | null
+}
+
+export type notesUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.notesUpdatetagsInput | string[]
+  source_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chunks?: Prisma.note_chunksUpdateManyWithoutNoteNestedInput
+}
+
+export type notesUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.notesUpdatetagsInput | string[]
+  source_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chunks?: Prisma.note_chunksUncheckedUpdateManyWithoutNoteNestedInput
+}
+
+export type notesUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.notesUpdatetagsInput | string[]
+  source_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source_type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  file_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+
+/**
+ * Count Type NotesCountOutputType
+ */
+
+export type NotesCountOutputType = {
+  chunks: number
+}
+
+export type NotesCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  chunks?: boolean | NotesCountOutputTypeCountChunksArgs
+}
+
+/**
+ * NotesCountOutputType without action
+ */
+export type NotesCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotesCountOutputType
+   */
+  select?: Prisma.NotesCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * NotesCountOutputType without action
+ */
+export type NotesCountOutputTypeCountChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.note_chunksWhereInput
+}
 
 
 export type notesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -462,6 +768,9 @@ export type notesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   source_type?: boolean
   file_url?: boolean
   user_id?: boolean
+  user?: boolean | Prisma.notes$userArgs<ExtArgs>
+  chunks?: boolean | Prisma.notes$chunksArgs<ExtArgs>
+  _count?: boolean | Prisma.NotesCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notes"]>
 
 export type notesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -476,6 +785,7 @@ export type notesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   source_type?: boolean
   file_url?: boolean
   user_id?: boolean
+  user?: boolean | Prisma.notes$userArgs<ExtArgs>
 }, ExtArgs["result"]["notes"]>
 
 export type notesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -490,6 +800,7 @@ export type notesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   source_type?: boolean
   file_url?: boolean
   user_id?: boolean
+  user?: boolean | Prisma.notes$userArgs<ExtArgs>
 }, ExtArgs["result"]["notes"]>
 
 export type notesSelectScalar = {
@@ -507,10 +818,24 @@ export type notesSelectScalar = {
 }
 
 export type notesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "tags" | "source_id" | "summary" | "created_at" | "updated_at" | "source_type" | "file_url" | "user_id", ExtArgs["result"]["notes"]>
+export type notesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.notes$userArgs<ExtArgs>
+  chunks?: boolean | Prisma.notes$chunksArgs<ExtArgs>
+  _count?: boolean | Prisma.NotesCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type notesIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.notes$userArgs<ExtArgs>
+}
+export type notesIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.notes$userArgs<ExtArgs>
+}
 
 export type $notesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "notes"
-  objects: {}
+  objects: {
+    user: Prisma.$usersPayload<ExtArgs> | null
+    chunks: Prisma.$note_chunksPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
@@ -917,6 +1242,8 @@ readonly fields: notesFieldRefs;
  */
 export interface Prisma__notesClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.notes$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.notes$userArgs<ExtArgs>>): Prisma.Prisma__usersClient<runtime.Types.Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  chunks<T extends Prisma.notes$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.notes$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$note_chunksPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -974,6 +1301,10 @@ export type notesFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
+  /**
    * Filter, which notes to fetch.
    */
   where: Prisma.notesWhereUniqueInput
@@ -992,6 +1323,10 @@ export type notesFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
+  /**
    * Filter, which notes to fetch.
    */
   where: Prisma.notesWhereUniqueInput
@@ -1009,6 +1344,10 @@ export type notesFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the notes
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
   /**
    * Filter, which notes to fetch.
    */
@@ -1058,6 +1397,10 @@ export type notesFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
+  /**
    * Filter, which notes to fetch.
    */
   where?: Prisma.notesWhereInput
@@ -1106,6 +1449,10 @@ export type notesFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
+  /**
    * Filter, which notes to fetch.
    */
   where?: Prisma.notesWhereInput
@@ -1149,6 +1496,10 @@ export type notesCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
+  /**
    * The data needed to create a notes.
    */
   data: Prisma.XOR<Prisma.notesCreateInput, Prisma.notesUncheckedCreateInput>
@@ -1182,6 +1533,10 @@ export type notesCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.notesCreateManyInput | Prisma.notesCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1196,6 +1551,10 @@ export type notesUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the notes
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
   /**
    * The data needed to update a notes.
    */
@@ -1248,6 +1607,10 @@ export type notesUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many notes to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1262,6 +1625,10 @@ export type notesUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the notes
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
   /**
    * The filter to search for the notes to update in case it exists.
    */
@@ -1289,6 +1656,10 @@ export type notesDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
+  /**
    * Filter which notes to delete.
    */
   where: Prisma.notesWhereUniqueInput
@@ -1309,6 +1680,49 @@ export type notesDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 /**
+ * notes.user
+ */
+export type notes$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the users
+   */
+  select?: Prisma.usersSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the users
+   */
+  omit?: Prisma.usersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
+  where?: Prisma.usersWhereInput
+}
+
+/**
+ * notes.chunks
+ */
+export type notes$chunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the note_chunks
+   */
+  select?: Prisma.note_chunksSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the note_chunks
+   */
+  omit?: Prisma.note_chunksOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.note_chunksInclude<ExtArgs> | null
+  where?: Prisma.note_chunksWhereInput
+  orderBy?: Prisma.note_chunksOrderByWithRelationInput | Prisma.note_chunksOrderByWithRelationInput[]
+  cursor?: Prisma.note_chunksWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Note_chunksScalarFieldEnum | Prisma.Note_chunksScalarFieldEnum[]
+}
+
+/**
  * notes without action
  */
 export type notesDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1320,4 +1734,8 @@ export type notesDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the notes
    */
   omit?: Prisma.notesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.notesInclude<ExtArgs> | null
 }

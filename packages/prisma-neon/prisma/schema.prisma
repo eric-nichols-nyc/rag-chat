@@ -5,7 +5,19 @@ generator client {
 
 datasource db {
   provider     = "postgresql"
-  relationMode = "prisma"
+  relationMode = "foreignKeys"
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// Users table - references Neon Auth user IDs
+model users {
+  id         String    @id @db.Uuid
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+
+  notes notes[]
+
+  @@index([id])
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -64,6 +76,8 @@ model note_chunks {
   created_at  DateTime?              @default(now()) @db.Timestamp(6)
   end_time    Float?
 
+  note        notes                  @relation(fields: [note_id], references: [id], onDelete: Cascade)
+
   @@index([note_id, chunk_index])
 }
 
@@ -80,6 +94,9 @@ model notes {
   source_type String?
   file_url    String?
   user_id     String?   @db.Uuid
+
+  user        users?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  chunks      note_chunks[]
 
   @@index([source_id])
   @@index([source_type])

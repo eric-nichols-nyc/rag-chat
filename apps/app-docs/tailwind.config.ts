@@ -1,4 +1,3 @@
-import { createPreset } from "fumadocs-ui/tailwind-plugin";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -9,7 +8,8 @@ const config: Config = {
     "./mdx-components.{ts,tsx}",
     "./node_modules/fumadocs-ui/dist/**/*.js",
   ],
-  presets: [createPreset()],
+  // Note: Tailwind CSS v4 uses CSS-based configuration via PostCSS
+  // The preset is not needed with Tailwind v4 and fumadocs-ui@16.2.2
 };
 
 export default config;

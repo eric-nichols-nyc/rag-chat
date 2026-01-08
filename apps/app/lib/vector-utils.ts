@@ -17,3 +17,4 @@ export function validateEmbedding(embedding: number[]): void {
     throw new Error("Embedding cannot be empty");
   }
 }
+

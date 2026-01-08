@@ -39,7 +39,9 @@ export async function getNote(input: { note_id: string }) {
     });
 
     // Check if any chunks have embeddings (checking for non-null embedding)
-    const chunksWithEmbeddings = await database.$queryRaw<Array<{ count: bigint }>>`
+    const chunksWithEmbeddings = await database.$queryRaw<
+      Array<{ count: bigint }>
+    >`
       SELECT COUNT(*)::bigint as count
       FROM note_chunks
       WHERE note_id = ${validatedInput.note_id}::uuid
@@ -72,9 +74,8 @@ export async function getNote(input: { note_id: string }) {
     return {
       success: false as const,
       error:
-        error instanceof Error
-          ? error.message
-          : "Failed to fetch note",
+        error instanceof Error ? error.message : "Failed to fetch note",
     };
   }
 }
+

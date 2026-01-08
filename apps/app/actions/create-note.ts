@@ -23,15 +23,13 @@ function generateTitle(text: string, maxLength: number = 200): string {
   const firstSentence = firstParagraph.split(/[.!?]/)[0]?.trim();
 
   // Use first sentence if it exists and is reasonable, otherwise first paragraph
-  const titleText = firstSentence && firstSentence.length <= maxLength
-    ? firstSentence
-    : firstParagraph;
+  const titleText =
+    firstSentence && firstSentence.length <= maxLength
+      ? firstSentence
+      : firstParagraph;
 
   // Clean up and truncate
-  const cleaned = titleText
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, maxLength);
+  const cleaned = titleText.replace(/\s+/g, " ").trim().slice(0, maxLength);
 
   // If we truncated, remove trailing incomplete words
   if (cleaned.length === maxLength && titleText.length > maxLength) {
@@ -42,10 +40,7 @@ function generateTitle(text: string, maxLength: number = 200): string {
   return cleaned || "Untitled Note";
 }
 
-export async function createNote(input: {
-  text: string;
-  title?: string;
-}) {
+export async function createNote(input: { text: string; title?: string }) {
   try {
     const validatedInput = createNoteSchema.parse(input);
 
@@ -59,7 +54,8 @@ export async function createNote(input: {
     const { user } = await neonAuth();
 
     // Generate title from text if not provided
-    const title = validatedInput.title?.trim() || generateTitle(validatedInput.text);
+    const title =
+      validatedInput.title?.trim() || generateTitle(validatedInput.text);
 
     // Create note in database
     const note = await database.notes.create({
@@ -93,9 +89,8 @@ export async function createNote(input: {
     return {
       success: false as const,
       error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create note",
+        error instanceof Error ? error.message : "Failed to create note",
     };
   }
 }
+

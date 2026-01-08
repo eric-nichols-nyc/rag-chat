@@ -36,7 +36,8 @@ export function ProcessingStatus({
     {
       label: "Generating embeddings",
       completed: embeddingsCount > 0 && embeddingsCount === chunksCount,
-      inProgress: isProcessing && chunksCount > 0 && embeddingsCount < chunksCount,
+      inProgress:
+        isProcessing && chunksCount > 0 && embeddingsCount < chunksCount,
     },
   ];
 
@@ -54,10 +55,7 @@ export function ProcessingStatus({
               : Circle;
 
           return (
-            <div
-              key={index}
-              className="flex items-center gap-2 text-sm"
-            >
+            <div key={index} className="flex items-center gap-2 text-sm">
               <Icon
                 className={cn(
                   "size-4",
@@ -100,3 +98,4 @@ export function ProcessingStatus({
     </div>
   );
 }
+

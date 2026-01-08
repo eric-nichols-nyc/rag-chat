@@ -10,7 +10,10 @@ import { embeddingToVectorString } from "@/lib/vector-utils";
 
 const chatWithNoteSchema = z.object({
   note_id: z.string().uuid("Invalid note ID"),
-  question: z.string().min(1, "Question is required").max(1000, "Question is too long"),
+  question: z
+    .string()
+    .min(1, "Question is required")
+    .max(1000, "Question is too long"),
 });
 
 type ChunkResult = {
@@ -31,7 +34,13 @@ export async function chatWithNote(input: {
     // Fetch the note to verify access
     const note = await database.notes.findUnique({
       where: { id: validatedInput.note_id },
-      select: { id: true, user_id: true, summary: true, content: true, title: true },
+      select: {
+        id: true,
+        user_id: true,
+        summary: true,
+        content: true,
+        title: true,
+      },
     });
 
     if (!note) {
@@ -129,3 +138,4 @@ Please provide a helpful answer based on the context above.`,
     };
   }
 }
+

@@ -1,10 +1,10 @@
 "use server";
 
 import { openai } from "@ai-sdk/openai";
-import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
-import { database } from "@repo/prisma-neon";
 import { generateText } from "ai";
+import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
 import { z } from "zod";
+import { database } from "@repo/prisma-neon";
 import { chunkText } from "@/lib/chunk-text";
 import { generateEmbedding } from "@/lib/generate-embedding";
 import { embeddingToVectorString, validateEmbedding } from "@/lib/vector-utils";
@@ -56,7 +56,7 @@ export async function processNote(input: { note_id: string }) {
       }
     }
 
-    // Generate summary first (outside transaction to avoid timeout)
+    // Step 1: Generate summary and save immediately (so it appears in UI right away)
     const { text: summary } = await generateText({
       model: openai("gpt-4o-mini"),
       system: `You are a helpful assistant that creates clear, comprehensive summaries of long text.
@@ -69,10 +69,16 @@ Your summaries should:
       prompt: `Please provide a comprehensive summary of the following text:\n\n${note.content}`,
     });
 
-    // Chunk the text
+    // Save summary immediately so it appears in the UI while chunks are being processed
+    await database.notes.update({
+      where: { id: validatedInput.note_id },
+      data: { summary },
+    });
+
+    // Step 2: Chunk the text
     const chunks = await chunkText(note.content);
 
-    // Generate embeddings for all chunks (outside transaction to avoid timeout)
+    // Step 3: Generate embeddings for all chunks (this takes time)
     const chunksWithEmbeddings = await Promise.all(
       chunks.map(async (chunk) => {
         // Generate embedding for each chunk
@@ -84,20 +90,14 @@ Your summaries should:
           note_id: validatedInput.note_id,
           content: chunk.content,
           chunk_index: chunk.index,
-          embedding: embeddingString as unknown as any, // Prisma treats vector as Unsupported type
+          embedding: embeddingString,
         };
       })
     );
 
-    // Use transaction for consistency (only database writes, fast operation)
-    const result = await database.$transaction(
+    // Step 4: Save chunks with embeddings in a separate transaction
+    await database.$transaction(
       async (tx) => {
-        // Update note with summary
-        await tx.notes.update({
-          where: { id: validatedInput.note_id },
-          data: { summary },
-        });
-
         // Insert chunks with vector embeddings using raw SQL
         // Prisma doesn't support Unsupported("vector") type, so we bypass it completely
         for (const chunkData of chunksWithEmbeddings) {
@@ -109,16 +109,16 @@ Your summaries should:
              VALUES ('${chunkData.note_id}'::uuid, '${escapedContent}'::text, ${chunkData.chunk_index}, '${chunkData.embedding}'::vector)`
           );
         }
-
-        return {
-          summary,
-          chunksCount: chunksWithEmbeddings.length,
-        };
       },
       {
         timeout: 10_000, // 10 seconds timeout for transaction
       }
     );
+
+    const result = {
+      summary,
+      chunksCount: chunksWithEmbeddings.length,
+    };
 
     return {
       success: true as const,
@@ -141,7 +141,9 @@ Your summaries should:
 
     return {
       success: false as const,
-      error: error instanceof Error ? error.message : "Failed to process note",
+      error:
+        error instanceof Error ? error.message : "Failed to process note",
     };
   }
 }
+

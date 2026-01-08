@@ -2,10 +2,10 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
-import { Loader2, Send, Bot, User } from "lucide-react";
+import { cn } from "@repo/design-system/lib/utils";
+import { Bot, Loader2, Send, User } from "lucide-react";
 import { useState, useTransition } from "react";
 import { chatWithNote } from "@/actions/chat-with-note";
-import { cn } from "@repo/design-system/lib/utils";
 
 type Message = {
   id: string;
@@ -27,7 +27,7 @@ export function NoteChatbot({
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (!input.trim() || isPending || !isProcessingComplete) {
       return;
     }
@@ -60,7 +60,8 @@ export function NoteChatbot({
         const errorMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: result.error || "Sorry, I encountered an error. Please try again.",
+          content:
+            result.error || "Sorry, I encountered an error. Please try again.",
         };
         setMessages((prev) => [...prev, errorMessage]);
       }
@@ -93,11 +94,11 @@ export function NoteChatbot({
             ) : (
               messages.map((message) => (
                 <div
-                  key={message.id}
                   className={cn(
                     "flex gap-3",
                     message.role === "user" ? "justify-end" : "justify-start"
                   )}
+                  key={message.id}
                 >
                   {message.role === "assistant" && (
                     <Bot className="mt-1 size-5 shrink-0 text-muted-foreground" />
@@ -107,14 +108,14 @@ export function NoteChatbot({
                       "max-w-[80%] rounded-lg px-4 py-2",
                       message.role === "user"
                         ? "bg-primary text-primary-foreground"
-                        : "bg-background border"
+                        : "border bg-background"
                     )}
                   >
                     <p className="whitespace-pre-wrap text-sm">
                       {message.content}
                     </p>
                     {message.role === "assistant" && message.chunksUsed && (
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="mt-1 text-muted-foreground text-xs">
                         Used {message.chunksUsed} relevant section
                         {message.chunksUsed !== 1 ? "s" : ""}
                       </p>
@@ -126,7 +127,7 @@ export function NoteChatbot({
                 </div>
               ))
             )}
-            {isPending && (
+            {!!isPending && (
               <div className="flex gap-3">
                 <Bot className="mt-1 size-5 shrink-0 text-muted-foreground" />
                 <div className="flex items-center gap-2 rounded-lg border bg-background px-4 py-2">
@@ -142,8 +143,8 @@ export function NoteChatbot({
           <div className="flex gap-2">
             <Input
               disabled={isPending || !isProcessingComplete}
-              onKeyDown={handleKeyPress}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
               placeholder={
                 isProcessingComplete
                   ? "Ask a question about the document..."
@@ -167,4 +168,3 @@ export function NoteChatbot({
     </div>
   );
 }
-

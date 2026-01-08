@@ -1,7 +1,7 @@
 "use client";
 
-import { Loader2, CheckCircle2, Circle } from "lucide-react";
 import { cn } from "@repo/design-system/lib/utils";
+import { CheckCircle2, Circle, Loader2 } from "lucide-react";
 
 type ProcessingStatusProps = {
   hasSummary: boolean;
@@ -47,55 +47,52 @@ export function ProcessingStatus({
     <div className="space-y-2 rounded-lg border bg-card p-4">
       <h3 className="font-semibold text-sm">Processing Status</h3>
       <div className="space-y-2">
-        {statusItems.map((item, index) => {
-          const Icon = item.completed
-            ? CheckCircle2
-            : item.inProgress
-              ? Loader2
-              : Circle;
+        {statusItems.map((item) => {
+          let Icon = Circle;
+          if (item.completed) {
+            Icon = CheckCircle2;
+          } else if (item.inProgress) {
+            Icon = Loader2;
+          }
 
           return (
-            <div key={index} className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 text-sm" key={item.label}>
               <Icon
                 className={cn(
                   "size-4",
-                  item.completed && "text-green-600",
-                  item.inProgress && "animate-spin text-blue-600",
-                  !item.completed &&
-                    !item.inProgress &&
+                  !!item.completed && "text-green-600",
+                  !!item.inProgress && "animate-spin text-blue-600",
+                  !!(item.completed || item.inProgress) === false &&
                     "text-muted-foreground"
                 )}
               />
               <span
                 className={cn(
-                  item.completed && "text-green-600",
-                  item.inProgress && "text-blue-600",
-                  !item.completed &&
-                    !item.inProgress &&
+                  !!item.completed && "text-green-600",
+                  !!item.inProgress && "text-blue-600",
+                  !!(item.completed || item.inProgress) === false &&
                     "text-muted-foreground"
                 )}
               >
                 {item.label}
-                {item.completed && item.label === "Creating text chunks" && (
+                {!!item.completed && item.label === "Creating text chunks" && (
                   <span className="ml-1">({chunksCount} chunks)</span>
                 )}
-                {item.completed &&
-                  item.label === "Generating embeddings" && (
-                    <span className="ml-1">
-                      ({embeddingsCount}/{chunksCount})
-                    </span>
-                  )}
+                {!!item.completed && item.label === "Generating embeddings" && (
+                  <span className="ml-1">
+                    ({embeddingsCount}/{chunksCount})
+                  </span>
+                )}
               </span>
             </div>
           );
         })}
       </div>
-      {allCompleted && (
-        <p className="mt-2 text-xs text-muted-foreground">
+      {!!allCompleted && (
+        <p className="mt-2 text-muted-foreground text-xs">
           All processing complete! You can now use the chatbot.
         </p>
       )}
     </div>
   );
 }
-

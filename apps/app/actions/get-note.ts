@@ -1,8 +1,8 @@
 "use server";
 
 import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
-import { z } from "zod";
 import { database } from "@repo/prisma-neon";
+import { z } from "zod";
 
 const getNoteSchema = z.object({
   note_id: z.string().uuid("Invalid note ID"),
@@ -73,9 +73,7 @@ export async function getNote(input: { note_id: string }) {
 
     return {
       success: false as const,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch note",
+      error: error instanceof Error ? error.message : "Failed to fetch note",
     };
   }
 }
-

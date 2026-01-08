@@ -1,15 +1,12 @@
 "use server";
 
 import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
+import { database } from "@repo/prisma-neon";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { database } from "@repo/prisma-neon";
 
 const createNoteSchema = z.object({
-  text: z
-    .string()
-    .min(1, "Text is required")
-    .max(100_000, "Text is too long"),
+  text: z.string().min(1, "Text is required").max(100_000, "Text is too long"),
   title: z.string().optional(),
 });
 
@@ -17,9 +14,10 @@ const createNoteSchema = z.object({
  * Generates a title from the first sentence/paragraph of text.
  * Truncates to max 200 characters and cleans whitespace.
  */
-function generateTitle(text: string, maxLength: number = 200): string {
+function generateTitle(text: string, maxLength = 200): string {
   // Try to extract first paragraph or first sentence
   const firstParagraph = text.split("\n\n")[0]?.trim() || text.trim();
+  // biome-ignore lint/performance/useTopLevelRegex: Regex is used infrequently, inline is acceptable
   const firstSentence = firstParagraph.split(/[.!?]/)[0]?.trim();
 
   // Use first sentence if it exists and is reasonable, otherwise first paragraph
@@ -93,9 +91,7 @@ export async function createNote(input: { text: string; title?: string }) {
 
     return {
       success: false as const,
-      error:
-        error instanceof Error ? error.message : "Failed to create note",
+      error: error instanceof Error ? error.message : "Failed to create note",
     };
   }
 }
-

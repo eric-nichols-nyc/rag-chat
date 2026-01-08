@@ -34,4 +34,3 @@ export async function chunkText(text: string): Promise<TextChunk[]> {
     index,
   }));
 }
-

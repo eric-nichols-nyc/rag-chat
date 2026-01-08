@@ -19,10 +19,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
   } catch (error) {
     console.error("Error generating embedding:", error);
     throw new Error(
-      error instanceof Error
-        ? error.message
-        : "Failed to generate embedding"
+      error instanceof Error ? error.message : "Failed to generate embedding"
     );
   }
 }
-

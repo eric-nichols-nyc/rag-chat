@@ -1,10 +1,10 @@
 "use server";
 
 import { openai } from "@ai-sdk/openai";
-import { generateText } from "ai";
 import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
-import { z } from "zod";
 import { database } from "@repo/prisma-neon";
+import { generateText } from "ai";
+import { z } from "zod";
 import { generateEmbedding } from "@/lib/generate-embedding";
 import { embeddingToVectorString } from "@/lib/vector-utils";
 
@@ -82,7 +82,9 @@ export async function chatWithNote(input: {
       .slice(0, 5); // Get top 5 most similar chunks
 
     const chunksContext = topChunks
-      .map((chunk, idx) => `[Chunk ${chunk.chunk_index + 1}]: ${chunk.content}`)
+      .map(
+        (chunk, _idx) => `[Chunk ${chunk.chunk_index + 1}]: ${chunk.content}`
+      )
       .join("\n\n");
 
     const context = note.summary
@@ -114,7 +116,7 @@ Please provide a helpful answer based on the context above.`,
         chunks: topChunks.map((chunk) => ({
           index: chunk.chunk_index,
           similarity: chunk.similarity,
-          preview: chunk.content.slice(0, 100) + "...",
+          preview: `${chunk.content.slice(0, 100)}...`,
         })),
       },
     };
@@ -138,4 +140,3 @@ Please provide a helpful answer based on the context above.`,
     };
   }
 }
-

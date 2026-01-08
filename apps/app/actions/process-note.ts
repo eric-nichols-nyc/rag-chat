@@ -1,10 +1,10 @@
 "use server";
 
 import { openai } from "@ai-sdk/openai";
-import { generateText } from "ai";
 import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
-import { z } from "zod";
 import { database } from "@repo/prisma-neon";
+import { generateText } from "ai";
+import { z } from "zod";
 import { chunkText } from "@/lib/chunk-text";
 import { generateEmbedding } from "@/lib/generate-embedding";
 import { embeddingToVectorString, validateEmbedding } from "@/lib/vector-utils";
@@ -141,9 +141,7 @@ Your summaries should:
 
     return {
       success: false as const,
-      error:
-        error instanceof Error ? error.message : "Failed to process note",
+      error: error instanceof Error ? error.message : "Failed to process note",
     };
   }
 }
-

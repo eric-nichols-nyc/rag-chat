@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -13,12 +11,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/design-system/components/ui/sidebar";
-import {
-  LayoutDashboard,
-  FileText,
-  Settings,
-  Sparkles,
-} from "lucide-react";
+import { FileText, LayoutDashboard, Settings, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const menuItems = [
   {
@@ -61,7 +56,9 @@ export function DashboardSidebar() {
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold">Admin Dashboard</span>
-                  <span className="text-muted-foreground text-xs">RAG Chat</span>
+                  <span className="text-muted-foreground text-xs">
+                    RAG Chat
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -79,7 +76,10 @@ export function DashboardSidebar() {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === item.href || pathname.startsWith(item.href + "/")}
+                      isActive={
+                        pathname === item.href ||
+                        pathname.startsWith(`${item.href}/`)
+                      }
                     >
                       <Link href={item.href}>
                         <Icon className="size-4" />
@@ -103,7 +103,10 @@ export function DashboardSidebar() {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === item.href || pathname.startsWith(item.href + "/")}
+                      isActive={
+                        pathname === item.href ||
+                        pathname.startsWith(`${item.href}/`)
+                      }
                     >
                       <Link href={item.href}>
                         <Icon className="size-4" />
@@ -120,4 +123,3 @@ export function DashboardSidebar() {
     </Sidebar>
   );
 }
-

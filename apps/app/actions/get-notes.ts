@@ -1,8 +1,8 @@
 "use server";
 
 import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
-import { z } from "zod";
 import { database } from "@repo/prisma-neon";
+import { z } from "zod";
 
 const getNotesSchema = z.object({
   tag: z.string().optional(),
@@ -91,9 +91,7 @@ export async function getNotes(input?: {
 
     return {
       success: false as const,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch notes",
+      error: error instanceof Error ? error.message : "Failed to fetch notes",
     };
   }
 }
-

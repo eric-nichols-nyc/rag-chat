@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type PollingWrapperProps = {
   noteId: string;
@@ -10,7 +10,6 @@ type PollingWrapperProps = {
 };
 
 export function PollingWrapper({
-  noteId,
   isProcessing,
   children,
 }: PollingWrapperProps) {
@@ -31,4 +30,3 @@ export function PollingWrapper({
 
   return <>{children}</>;
 }
-

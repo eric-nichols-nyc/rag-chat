@@ -83,7 +83,11 @@ export async function createNote(input: { text: string; title?: string }) {
     }
 
     // If it's a redirect error, rethrow it (Next.js redirect throws)
-    if (error && typeof error === "object" && "digest" in error) {
+    // Also handle mocked redirects in tests that throw Error with "REDIRECT:" message
+    if (
+      (error && typeof error === "object" && "digest" in error) ||
+      (error instanceof Error && error.message.startsWith("REDIRECT:"))
+    ) {
       throw error;
     }
 
